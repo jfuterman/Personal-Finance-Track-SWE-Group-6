@@ -8,4 +8,4 @@ We use React with TypeScript based on Figma designs.
 
 ## Backend
 
-We built this project with Django and Python. It hosts user data in a database managed with PostgreSQL and retrieve financial data with the Plaid API.
+We built this project with Django and Python. It hosts user data in a database managed with PostgreSQL and retrieves financial data with the Plaid API.
