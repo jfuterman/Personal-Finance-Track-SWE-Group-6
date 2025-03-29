@@ -19,9 +19,7 @@ Get started by cloning this repository. Then, create your virtual environment an
 Head to the `django` folder and run `python manage.py runserver`. You started the Django server!
 
 ## Contribution Guidelines for WealthWise
-### Overview
-
-#### Branching Strategy
+### Branching Strategy
 We'll follow the Git Feature Branch Workflow:
 
 | Branch          | Purpose                                  |
@@ -33,33 +31,33 @@ We'll follow the Git Feature Branch Workflow:
 | `hotfix/<name>`  | Critical production fixes             |
 
 
-#### When to branch
+### When to branch
 Create a feature branch off dev before starting any new user story or task.
 
 Only work on one task per branch to keep pull requests clean.
 
-#### Committing Code
+### Committing Code
 Follow these commit guidelines to keep history clean and readable:
 
-##### Small commits 
+#### Small commits 
 Make focused commits for each logical change. **Avoid committing directly to dev or main.**
 
 
-##### Pull Requests (PRs)
-###### When to create a PR
+#### Pull Requests (PRs)
+##### When to create a PR
 When your task is completed and tested locally.
 
-###### How?
+##### How?
 Submit a PR from your feature/ or bugfix/ branch to dev.
 
 
-###### PR Checklist
+##### PR Checklist
 - Code compiles without errors.
 - You’ve tested your feature or fix locally.
 - No console errors or linter warnings.
 - At least 1 other teammate has reviewed and approved the PR.
   
-##### Merging & Pulling
+#### Merging & Pulling
 Always pull the latest dev before creating or updating a branch.
 
 If your branch is out of date, use:
@@ -69,7 +67,7 @@ If your branch is out of date, use:
 After PR approval, a designated team member (rotating) merges it into dev.
 
 
-##### Deployment
+#### Deployment
 Code from dev will be deployed to a staging environment.
 
 Only tested and approved features will be merged into main for production deployment.
