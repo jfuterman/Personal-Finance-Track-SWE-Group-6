@@ -1,0 +1,156 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{% static 'css/goals.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Goals</h2>
+
+    <div class="row">
+        <!-- Savings Goal Card -->
+        <div class="col-md-6">
+            <div class="goal-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Savings Goal</h5>
+                    <select class="date-selector" id="savingsPeriod">
+                        {% for month in available_months %}
+                        <option value="{{ month.value }}" {% if month.current %}selected{% endif %}>
+                            {{ month.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div class="savings-info">
+                    <div class="label">
+                        <i class="bi bi-trophy me-2"></i>
+                        Target Achieved
+                    </div>
+                    <div class="value">${{ savings_goal.achieved_amount|floatformat:2 }}</div>
+                </div>
+
+                <div class="savings-info">
+                    <div class="label">
+                        <i class="bi bi-calendar me-2"></i>
+                        Monthly Target
+                    </div>
+                    <div class="value">${{ savings_goal.monthly_target|floatformat:2 }}</div>
+                </div>
+
+                <div class="progress-container">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ savings_goal.monthly_progress_percentage }}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>Progress: {{ savings_goal.monthly_progress_percentage|floatformat:2 }}%</span>
+                        <span>${{ savings_goal.monthly_target|floatformat:2 }}</span>
+                    </div>
+                </div>
+
+                <button class="adjust-btn mt-3" onclick="adjustGoal('savings')">
+                    <i class="bi bi-pencil"></i>
+                    Adjust Goal
+                </button>
+            </div>
+        </div>
+
+        <!-- Saving Summary Card -->
+        <div class="col-md-6">
+            <div class="goal-card">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="mb-0">Saving Summary</h5>
+                    <select class="date-selector" id="summaryPeriod">
+                        <option value="current">{{ current_month }}</option>
+                        <option value="previous">Previous Month</option>
+                    </select>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="savingsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expenses Goals Section -->
+    <h4 class="mb-4">Expenses Goals by Category</h4>
+    <div class="row">
+        {% for goal in expense_goals %}
+        <div class="col-md-4">
+            <div class="category-card" data-category="{{ goal.category }}">
+                <div class="category-header">
+                    <div class="category-name">
+                        <i class="bi bi-{% if goal.category == 'housing' %}house{% elif goal.category == 'food' %}cup-hot{% elif goal.category == 'transportation' %}car-front{% elif goal.category == 'entertainment' %}controller{% elif goal.category == 'shopping' %}bag{% else %}three-dots{% endif %}"></i>
+                        {{ goal.category|title }}
+                    </div>
+                    <button class="btn btn-link p-0" onclick="adjustGoal('{{ goal.category }}')">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                </div>
+                <div class="category-amount">${{ goal.monthly_target|floatformat:2 }}</div>
+                <div class="progress-container">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" style="width: {{ goal.monthly_progress_percentage }}%"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>Progress: {{ goal.monthly_progress_percentage|floatformat:2 }}%</span>
+                        <span>${{ goal.monthly_target|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Adjust Goal Modal -->
+<div class="modal fade" id="adjustGoalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Adjust Goal</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="adjustGoalForm" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Monthly Target ($)</label>
+                        <input type="number" class="form-control" name="monthly_target" step="0.01" required>
+                        <small class="text-muted">Set your target spending/saving for this month</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Total Target ($)</label>
+                        <input type="number" class="form-control" name="target_amount" step="0.01" required>
+                        <small class="text-muted">Set your overall goal target amount</small>
+                    </div>
+                    <div id="goalProgress" class="alert alert-info d-none">
+                        <div class="current-progress mb-2"></div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Chart Data -->
+<script id="chart-data" type="application/json">
+{
+    "labels": {{ current_month_days|safe }},
+    "values": {{ daily_savings|safe }}
+}
+</script>
+
+<script src="{% static 'js/goals.js' %}"></script>
+{% endblock %} 

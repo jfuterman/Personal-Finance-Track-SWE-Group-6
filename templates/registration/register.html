@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">WealthWise</h1>
+    <h4 class="text-center mb-4">Create an account</h4>
+    
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+        
+        {{ form.username }}
+        {{ form.email }}
+        {{ form.password1 }}
+        {{ form.password2 }}
+        
+        <div class="terms">
+            By continuing, you agree to our <a href="#">terms of service</a>.
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Sign up</button>
+    </form>
+    
+    <div class="text-center mt-3 mb-3">
+        <small class="text-muted">or sign up with</small>
+    </div>
+    
+    <a href="#" class="google-btn">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google">
+        Continue with Google
+    </a>
+    
+    <div class="auth-links">
+        <small>Already have an account? <a href="{% url 'login' %}">Sign in here</a></small>
+    </div>
+</div>
+{% endblock %} 

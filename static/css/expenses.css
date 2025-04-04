@@ -1,0 +1,77 @@
+.expense-details {
+    display: none;
+    margin-top: 1rem;
+}
+
+.expense-details.show {
+    display: block;
+}
+
+.expense-card {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.expense-card:hover {
+    background-color: #f8f9fa;
+}
+
+.chart-container {
+    position: relative;
+    height: 400px;
+    width: 100%;
+    margin-bottom: 1rem;
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    display: block;
+}
+
+#expensesChart {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* Card Styles */
+.card {
+    border: none;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+    margin-bottom: 1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Form Control Styles */
+.form-select {
+    padding: 0.5rem 1rem;
+    border-color: #e2e8f0;
+    border-radius: 0.5rem;
+}
+
+/* Table Styles */
+.table-sm th,
+.table-sm td {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Icons */
+.bi {
+    font-size: 1.25rem;
+}
+
+/* Text Colors */
+.text-success {
+    color: #22c55e !important;
+}
+
+.text-danger {
+    color: #ef4444 !important;
+}
+
+.text-muted {
+    color: #64748b !important;
+} 
