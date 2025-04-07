@@ -1,5 +1,5 @@
 """
-Django settings for wealthwise project.
+Django settings for WealthWise.
 """
 
 from pathlib import Path
