@@ -1,4 +1,5 @@
-# Dockerfile runs on build. 
+# Dockerfile runs on build. It builds the image with
+# the settings required.  
 FROM python:3.12
 
 # Set working directory inside container
