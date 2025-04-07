@@ -12,7 +12,6 @@ import random
 from datetime import datetime, timedelta
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-import google.generativeai as genai
 from django.conf import settings
 from collections import defaultdict
 import json
