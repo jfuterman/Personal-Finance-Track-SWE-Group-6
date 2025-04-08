@@ -531,3 +531,23 @@ def adjust_goal(request, category):
 
 def home(request):
     return render(request, 'home.html') 
+
+from rest_framework import viewsets
+from .models import Transaction, Goal, Bill, BankAccount
+from .serializers import TransactionSerializer, GoalSerializer, BillSerializer, BankAccountSerializer
+
+class TransactionViewSet(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+class GoalViewSet(viewsets.ModelViewSet):
+    queryset = Goal.objects.all()
+    serializer_class = GoalSerializer
+
+class BillViewSet(viewsets.ModelViewSet):
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer
+
+class BankAccountViewSet(viewsets.ModelViewSet):
+    queryset = BankAccount.objects.all()
+    serializer_class = BankAccountSerializer
