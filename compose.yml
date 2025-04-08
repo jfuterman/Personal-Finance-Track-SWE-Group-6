@@ -1,6 +1,19 @@
 # A Docker compose file. It spins up the Django 
 # server and creates the PostgreSQL database. 
 services:
+  frontend:
+    build:
+      context: ./frontend
+    container_name: wealthwise-frontend
+    working_dir: /app
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    # Terminal for printing to console
+    tty: true
   db:
     image: postgres:16
     container_name: wealthwise
