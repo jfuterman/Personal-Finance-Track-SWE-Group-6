@@ -18,7 +18,7 @@ We use Docker to manage development.
 
 Get started by cloning this repository. If you've got Docker installed on your computer, run `docker compose up --build`. This will spin up the database, Django, and front end services.
 
-If you don't have Docker, create your virtual environment and install the dependencies. Depending on your system and version of Python, you'll run `python -m venv .venv` to create the virtual environment. Then, run `pip install -r requirements.txt` to install the project dependencies.
+If you don't have Docker, create your virtual environment and install the dependencies. Depending on your system and version of Python, you'll run `python -m venv .venv` to create the virtual environment and then `source venv/bin/activate` to activate it. Then, run `pip install -r requirements.txt` to install the project dependencies.
 
 ### Launch Django
 
