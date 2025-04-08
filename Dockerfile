@@ -3,7 +3,7 @@
 FROM python:3.12
 
 # Set working directory inside container
-WORKDIR /Personal-Finance-Track-SWE-Group-6
+WORKDIR /app
 
 # Install dependencies from requirements.txt
 COPY requirements.txt requirements.txt
