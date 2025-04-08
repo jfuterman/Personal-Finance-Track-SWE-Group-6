@@ -35,7 +35,7 @@ All changes will follow this general pattern:
 1. Switch to the main branch using `git checkout main`
 2. Use `git pull` to retrieve all of the latest changes to `main`.
 3. Use `git checkout -b <new_branch_name>`. This creates a new branch for you to work off of. Pick a name that describes what you're doing on this branch.
-4. Commit often. Once the feature is done and works, submit a Pull Request and ask a team member to review and merge your changes.
+4. Make your desired changes, committing often. Once the feature is done and works, submit a Pull Request and ask a team member to review and merge your changes into the main branch.
 
 ### Branching Strategy
 
