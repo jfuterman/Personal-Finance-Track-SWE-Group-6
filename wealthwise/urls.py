@@ -1,13 +1,21 @@
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from accounts.views import (
     CustomLoginView, SignUpView, overview, balances, transactions,
     bills, expenses, goals, settings, add_account, add_bill, remove_bill,
     add_transaction, update_account, change_password, delete_transaction,
-    add_goal, edit_goal, delete_goal, adjust_goal, home, remove_account
+    add_goal, edit_goal, delete_goal, adjust_goal, home, remove_account,
+    TransactionViewSet, GoalViewSet, BillViewSet, BankAccountViewSet  # <- Include these for API
 )
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
+
+router = DefaultRouter()
+router.register(r'transactions', TransactionViewSet)
+router.register(r'goals', GoalViewSet)
+router.register(r'bills', BillViewSet)
+router.register(r'accounts', BankAccountViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,4 +44,6 @@ urlpatterns = [
     path('edit-goal/<int:goal_id>/', edit_goal, name='edit_goal'),
     path('delete-goal/<int:goal_id>/', delete_goal, name='delete_goal'),
     path('adjust-goal/<str:category>/', adjust_goal, name='adjust_goal'),
-] 
+
+    path('api/', include(router.urls)),  # 👈 API endpoint added here
+]
