@@ -12,8 +12,7 @@ const sidebarLinks = [
   { name: 'Bills', icon: <CreditCard size={16} />, path: '/bills' },
   { name: 'Expenses', icon: <LineChart size={16} />, path: '/expenses' },
   { name: 'Goals', icon: <Trophy size={16} />, path: '/goals' },
-  { name: 'Settings', icon: <Settings size={16} />, path: '/settings' },
-  { name: 'Logout', icon: <LogOut size={16} />, path: '/logout' }
+  { name: 'Settings', icon: <Settings size={16} />, path: '/settings' }
 ];
 
 export default function Layout() {
@@ -63,6 +62,19 @@ export default function Layout() {
               </NavLink>
             ))}
           </nav>
+          <div className="px-4 mt-4">
+            <button
+              onClick={() => {
+                localStorage.removeItem("access");
+                localStorage.removeItem("refresh");
+                navigate("/login");
+              }}
+              className="flex items-center gap-2 text-sm text-red-400 hover:text-red-600"
+            >
+              <LogOut size={16} />
+              <span>Logout</span>
+            </button>
+          </div>
         </div>
         <div className="p-4 border-t border-gray-700 text-sm text-gray-400">
           <div className="bg-gray-800 rounded-full w-full py-2 px-4 flex items-center justify-between">
