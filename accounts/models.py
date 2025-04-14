@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 from django.utils import timezone
 from django.db.models import Sum
+from django.conf import settings
 
 class BankAccount(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -150,3 +151,18 @@ class Goal(models.Model):
 
     class Meta:
         ordering = ['end_date'] 
+
+class Settings(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    email_preferences = models.BooleanField(default=True)
+    language = models.CharField(max_length=10, default='en')
+    theme = models.CharField(max_length=10, choices=[('light', 'Light'), ('dark', 'Dark')], default='light')
+    timezone = models.CharField(max_length=50, default='UTC')
+    privacy_settings = models.JSONField(default=dict)
+    notification_settings = models.JSONField(default=dict)
+    two_factor_auth = models.BooleanField(default=False)
+    profile_visibility = models.CharField(max_length=10, choices=[('public', 'Public'), ('private', 'Private')], default='private')
+    last_login = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"Settings for {self.user.username}"
