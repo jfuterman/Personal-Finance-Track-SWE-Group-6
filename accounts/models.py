@@ -5,9 +5,10 @@ from datetime import datetime
 from django.utils import timezone
 from django.db.models import Sum
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 class BankAccount(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     account_type = models.CharField(max_length=50)
     account_name = models.CharField(max_length=100)
     bank_name = models.CharField(max_length=100)
@@ -31,7 +32,7 @@ class BankAccount(models.Model):
         return f"{self.account_name} - {self.masked_account_number}"
 
 class Bill(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     item_name = models.CharField(max_length=100)
     description = models.TextField()
     amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -89,7 +90,7 @@ class Transaction(models.Model):
         ('Others', 'Others')
     ]
     
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     transaction_type = models.CharField(max_length=10, choices=TRANSACTION_TYPES)
     item_name = models.CharField(max_length=100)
     shop_name = models.CharField(max_length=100)
@@ -104,6 +105,13 @@ class Transaction(models.Model):
     def __str__(self):
         return f"{self.item_name} - {self.amount} ({self.transaction_type})" 
 
+class CustomUser(AbstractUser):
+    phone_number = models.CharField(max_length=15, blank=True)
+    profile_photo = models.ImageField(upload_to='profile_photos/', blank=True, null=True)
+
+    def __str__(self):
+        return self.username
+
 class Goal(models.Model):
     GOAL_CATEGORIES = [
         ('savings', 'Savings'),
@@ -115,7 +123,7 @@ class Goal(models.Model):
         ('others', 'Others'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
     category = models.CharField(max_length=50, choices=GOAL_CATEGORIES)
     target_amount = models.DecimalField(max_digits=10, decimal_places=2)
