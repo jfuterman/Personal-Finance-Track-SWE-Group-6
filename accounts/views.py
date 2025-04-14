@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Q
 from .forms import CustomUserCreationForm, CustomPasswordChangeForm
-from .models import BankAccount, Bill, Transaction, Goal
+from .models import BankAccount, Bill, Transaction, Goal, CustomUser
 import random
 from datetime import datetime, timedelta
 from django.contrib.auth.forms import PasswordChangeForm
@@ -17,6 +17,7 @@ from collections import defaultdict
 import json
 from django.db.models import Sum
 from django.contrib import messages
+from django.http import JsonResponse
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
@@ -471,10 +472,61 @@ def delete_goal(request, goal_id):
         goal.delete()
     return redirect('goals')
 
+
+# Route to update user's settings. 
+# GET: retrieve user's settings when visiting user settings page.
+# POST: update user's settings in the database. 
 @login_required
 def settings(request):
-    form = CustomPasswordChangeForm(request.user)
-    return render(request, 'settings.html', {'form': form})
+    if request.method == 'GET':
+        try:
+            # Query the database for users and their associated settings, passing in current user's id
+            user_with_settings = CustomUser.objects.select_related('settings').get(id=request.user.id)
+            data = {
+                "username": user_with_settings.username,
+                "email": user_with_settings.email,
+                "name": user_with_settings.first_name,  # or full_name if you have it
+                "phone": user_with_settings.settings.phone,  # assuming phone is in settings
+                "profile_photo": user_with_settings.settings.profile_photo.url if user_with_settings.settings.profile_photo else None,
+            }
+            return JsonResponse(data, safe=False)
+        except CustomUser.DoesNotExist:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+    if request.method == 'POST':
+        try:
+            body = json.loads(request.body)
+            user = request.user
+
+            # Update user fields if present in request
+            if "username" in body:
+                user.username = body["username"]
+            if "email" in body:
+                user.email = body["email"]
+            if "name" in body:
+                user.first_name = body["name"]
+            if "password" in body:
+                user.set_password(body["password"])
+            
+            # Updating two tables depending on the settings; user, or settings.
+            # Commit the changes to CustomUser table
+            user.save()
+
+            # Update settings fields if present in request
+            settings = user.settings 
+            if "phone" in body:
+                settings.phone = body["phone"]
+            if "profile_photo" in body:
+                settings.profile_photo = body["profile_photo"]
+            
+            # Commit the changes to settings table
+            settings.save()
+
+            return JsonResponse({"success": "Settings updated"}, status=200)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=400)
+
 
 @login_required
 def update_account(request):
