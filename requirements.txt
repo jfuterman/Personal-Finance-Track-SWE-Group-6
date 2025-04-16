@@ -2,8 +2,11 @@ asgiref==3.8.1
 certifi==2025.1.31
 charset-normalizer==3.4.1
 Django==5.1.7
+django-cors-headers==4.7.0
+djangorestframework==3.16.0
 dotenv==0.9.9
 idna==3.10
+pillow==11.2.1
 psycopg==3.2.6
 psycopg-binary==3.2.6
 python-dotenv==1.1.0
