@@ -221,6 +221,23 @@ def delete_transaction(request, transaction_id):
     return redirect('transactions')
 
 @login_required
+<<<<<<< HEAD
+=======
+def edit_transaction(request, transaction_id):
+    if request.method == 'POST':
+        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+        transaction.transaction_type = request.POST['transaction_type']
+        transaction.item_name = request.POST['item_name']
+        transaction.shop_name = request.POST['shop_name']
+        transaction.amount = request.POST['amount']
+        transaction.date = request.POST['date']
+        transaction.payment_method = request.POST['payment_method']
+        transaction.category = request.POST['category']
+        transaction.save()
+    return redirect('transactions')
+
+@login_required
+>>>>>>> 42def5b (Initial commit with updated folder)
 def bills(request):
     current_date = timezone.now().strftime('%B %d, %Y')
     bills = Bill.objects.filter(user=request.user).order_by('due_date')
@@ -257,6 +274,28 @@ def remove_bill(request, bill_id):
     return redirect('bills')
 
 @login_required
+<<<<<<< HEAD
+=======
+def edit_bill(request, bill_id):
+    if request.method == 'POST':
+        bill = get_object_or_404(Bill, id=bill_id, user=request.user)
+        bill.item_name = request.POST['item_name']
+        bill.description = request.POST['description']
+        bill.amount = request.POST['amount']
+        bill.due_date = request.POST['due_date']
+        bill.website_url = request.POST['website_url']
+        
+        if request.POST.get('last_charge'):
+            bill.last_charge = request.POST['last_charge']
+        else:
+            bill.last_charge = None
+            
+        bill.save()  # This will trigger the logo search in the save method
+        
+    return redirect('bills')
+
+@login_required
+>>>>>>> 42def5b (Initial commit with updated folder)
 def expenses(request):
     current_date = timezone.now()
     start_date = current_date - timedelta(days=365)  # Last 12 months
@@ -473,8 +512,17 @@ def delete_goal(request, goal_id):
 
 @login_required
 def settings(request):
+<<<<<<< HEAD
     form = CustomPasswordChangeForm(request.user)
     return render(request, 'settings.html', {'form': form})
+=======
+    current_date = timezone.now().strftime('%B %d, %Y')
+    form = CustomPasswordChangeForm(request.user)
+    return render(request, 'settings.html', {
+        'form': form,
+        'current_date': current_date
+    })
+>>>>>>> 42def5b (Initial commit with updated folder)
 
 @login_required
 def update_account(request):
