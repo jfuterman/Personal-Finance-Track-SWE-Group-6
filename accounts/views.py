@@ -221,8 +221,6 @@ def delete_transaction(request, transaction_id):
     return redirect('transactions')
 
 @login_required
-<<<<<<< HEAD
-=======
 def edit_transaction(request, transaction_id):
     if request.method == 'POST':
         transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
@@ -237,7 +235,6 @@ def edit_transaction(request, transaction_id):
     return redirect('transactions')
 
 @login_required
->>>>>>> 42def5b (Initial commit with updated folder)
 def bills(request):
     current_date = timezone.now().strftime('%B %d, %Y')
     bills = Bill.objects.filter(user=request.user).order_by('due_date')
@@ -274,8 +271,6 @@ def remove_bill(request, bill_id):
     return redirect('bills')
 
 @login_required
-<<<<<<< HEAD
-=======
 def edit_bill(request, bill_id):
     if request.method == 'POST':
         bill = get_object_or_404(Bill, id=bill_id, user=request.user)
@@ -295,7 +290,6 @@ def edit_bill(request, bill_id):
     return redirect('bills')
 
 @login_required
->>>>>>> 42def5b (Initial commit with updated folder)
 def expenses(request):
     current_date = timezone.now()
     start_date = current_date - timedelta(days=365)  # Last 12 months
@@ -512,17 +506,12 @@ def delete_goal(request, goal_id):
 
 @login_required
 def settings(request):
-<<<<<<< HEAD
-    form = CustomPasswordChangeForm(request.user)
-    return render(request, 'settings.html', {'form': form})
-=======
     current_date = timezone.now().strftime('%B %d, %Y')
     form = CustomPasswordChangeForm(request.user)
     return render(request, 'settings.html', {
         'form': form,
         'current_date': current_date
     })
->>>>>>> 42def5b (Initial commit with updated folder)
 
 @login_required
 def update_account(request):
@@ -576,6 +565,21 @@ def adjust_goal(request, category):
         except ValueError:
             messages.error(request, 'Please enter valid numbers for target amounts.')
     return redirect('goals')
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        confirmation = request.POST.get('confirmation', '').strip()
+        if confirmation == 'DELETE':
+            user = request.user
+            user.delete()
+            return redirect('login')
+        else:
+            return render(request, 'settings.html', {
+                'delete_error': 'Please type DELETE exactly to confirm account deletion.',
+                'form': CustomPasswordChangeForm(request.user)
+            })
+    return redirect('settings')
 
 def home(request):
     return render(request, 'home.html') 

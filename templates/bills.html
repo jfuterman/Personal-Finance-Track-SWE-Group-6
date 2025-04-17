@@ -41,14 +41,6 @@
                 <td>{{ bill.last_charge|date:"d M, Y"|default:"N/A" }}</td>
                 <td>${{ bill.amount }}</td>
                 <td>
-<<<<<<< HEAD
-                    <form method="post" action="{% url 'remove_bill' bill.id %}" style="display: inline;">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </form>
-=======
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editBillModal{{ bill.id }}">
                             <i class="bi bi-pencil-square"></i>
@@ -60,7 +52,6 @@
                             </button>
                         </form>
                     </div>
->>>>>>> 42def5b (Initial commit with updated folder)
                 </td>
             </tr>
             {% empty %}
@@ -121,8 +112,6 @@
         </div>
     </div>
 </div>
-<<<<<<< HEAD
-=======
 
 <!-- Edit Bill Modals -->
 {% for bill in bills %}
@@ -170,5 +159,4 @@
     </div>
 </div>
 {% endfor %}
->>>>>>> 42def5b (Initial commit with updated folder)
 {% endblock %} 
