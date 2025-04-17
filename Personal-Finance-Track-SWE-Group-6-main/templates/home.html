@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="auth-container">
+    <h1 class="auth-title">Welcome to WealthWise</h1>
+    {% if user.is_authenticated %}
+        <p class="text-center">Welcome, {{ user.username }}!</p>
+        <a href="{% url 'logout' %}" class="btn btn-primary">Logout</a>
+    {% else %}
+        <p class="text-center">Please <a href="{% url 'login' %}">login</a> to continue.</p>
+    {% endif %}
+</div>
+{% endblock %} 

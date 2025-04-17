@@ -1,0 +1,110 @@
+{% extends 'dashboard_base.html' %}
+{% load static %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="{% static 'css/expenses.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <h2 class="mb-4">Expenses Comparison</h2>
+
+    <!-- Monthly Comparison Graph -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title">Total Expenses</h5>
+                <select id="timeRangeSelect" class="form-select" style="width: auto;">
+                    <option value="monthly">Monthly View</option>
+                    <option value="yearly">Yearly View</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="expensesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden data for JavaScript -->
+    <script id="graphData" type="application/json">
+        {{ graph_data|safe }}
+    </script>
+    <script id="yearlyData" type="application/json">
+        {{ yearly_data|safe }}
+    </script>
+
+    <!-- Expenses Breakdown -->
+    <h3 class="mb-4">Expenses Breakdown</h3>
+    <div class="row">
+        {% for expense in expense_breakdown %}
+        <div class="col-md-4 mb-4">
+            <div class="card expense-card" data-category="{{ expense.category|slugify }}" onclick="toggleDetails('{{ expense.category|slugify }}')">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        {% if expense.category == 'Housing' %}
+                        <i class="bi bi-house-door me-2"></i>
+                        {% elif expense.category == 'Food' %}
+                        <i class="bi bi-cart4 me-2"></i>
+                        {% elif expense.category == 'Transportation' %}
+                        <i class="bi bi-car-front me-2"></i>
+                        {% elif expense.category == 'Entertainment' %}
+                        <i class="bi bi-film me-2"></i>
+                        {% elif expense.category == 'Shopping' %}
+                        <i class="bi bi-bag me-2"></i>
+                        {% else %}
+                        <i class="bi bi-three-dots me-2"></i>
+                        {% endif %}
+                        <h5 class="card-title mb-0">{{ expense.category }}</h5>
+                    </div>
+                    <h3 class="mb-2">${{ expense.amount|floatformat:2 }}</h3>
+                    <div class="d-flex align-items-center">
+                        {% if expense.percentage > 0 %}
+                        <span class="text-success me-2">
+                            <i class="bi bi-arrow-up"></i>
+                        </span>
+                        {% else %}
+                        <span class="text-danger me-2">
+                            <i class="bi bi-arrow-down"></i>
+                        </span>
+                        {% endif %}
+                        <span>{{ expense.percentage }}%</span>
+                        <small class="text-muted ms-2">of total expenses</small>
+                    </div>
+
+                    <!-- Expense Details -->
+                    <div id="{{ expense.category|slugify }}-details" class="expense-details">
+                        <hr>
+                        <h6>Recent Transactions</h6>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Item</th>
+                                        <th>Shop</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for detail in expense.details %}
+                                    <tr>
+                                        <td>{{ detail.date }}</td>
+                                        <td>{{ detail.item_name }}</td>
+                                        <td>{{ detail.shop_name }}</td>
+                                        <td>${{ detail.amount|floatformat:2 }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="{% static 'js/expenses.js' %}"></script>
+{% endblock %} 

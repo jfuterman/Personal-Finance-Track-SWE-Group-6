@@ -1,0 +1,121 @@
+{% extends 'dashboard_base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">Settings</h2>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="nav flex-column nav-pills" role="tablist">
+                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#account" type="button">
+                    <i class="bi bi-person me-2"></i>Account
+                </button>
+                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#security" type="button">
+                    <i class="bi bi-shield-lock me-2"></i>Security
+                </button>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="tab-content">
+                <!-- Account Tab -->
+                <div class="tab-pane fade show active" id="account">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Account Information</h5>
+                            
+                            {% if account_updated %}
+                            <div class="alert alert-success">
+                                Your account information has been updated successfully.
+                            </div>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'update_account' %}">
+                                {% csrf_token %}
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Full name</label>
+                                        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="First Name">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">&nbsp;</label>
+                                        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Last Name">
+                                    </div>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Tab -->
+                <div class="tab-pane fade" id="security">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Change Password</h5>
+                            
+                            {% if password_updated %}
+                            <div class="alert alert-success">
+                                Your password has been updated successfully.
+                            </div>
+                            {% endif %}
+
+                            {% if password_error %}
+                            <div class="alert alert-danger">
+                                {{ password_error }}
+                            </div>
+                            {% endif %}
+
+                            <form method="post" action="{% url 'change_password' %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" name="old_password" class="form-control" required>
+                                    {% if form.old_password.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.old_password.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" name="new_password1" class="form-control" required>
+                                    {% if form.new_password1.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.new_password1.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" name="new_password2" class="form-control" required>
+                                    {% if form.new_password2.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.new_password2.errors.0 }}
+                                    </div>
+                                    {% endif %}
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">Change Password</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
