@@ -2,7 +2,11 @@
 
 {% block content %}
 <div class="container-fluid">
-    <h2 class="mb-4">Settings</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Settings</h2>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-3">
@@ -30,30 +34,38 @@
                             </div>
                             {% endif %}
 
+                            {% if delete_error %}
+                            <div class="alert alert-danger">
+                                {{ delete_error }}
+                            </div>
+                            {% endif %}
+
                             <form method="post" action="{% url 'update_account' %}">
                                 {% csrf_token %}
                                 <div class="row mb-3">
                                     <div class="col-md-6">
-                                        <label class="form-label">Full name</label>
-                                        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}" placeholder="First Name">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" name="first_name" class="form-control" value="{{ user.first_name }}">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label">&nbsp;</label>
-                                        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}" placeholder="Last Name">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" name="last_name" class="form-control" value="{{ user.last_name }}">
                                     </div>
                                 </div>
-                                
                                 <div class="mb-3">
                                     <label class="form-label">Email</label>
-                                    <input type="email" name="email" class="form-control" value="{{ user.email }}" required>
+                                    <input type="email" name="email" class="form-control" value="{{ user.email }}">
                                 </div>
-                                
                                 <div class="mb-3">
                                     <label class="form-label">Username</label>
-                                    <input type="text" name="username" class="form-control" value="{{ user.username }}" required>
+                                    <input type="text" name="username" class="form-control" value="{{ user.username }}">
                                 </div>
-
-                                <button type="submit" class="btn btn-primary">Update Profile</button>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                                        <i class="bi bi-trash me-2"></i>Delete Account
+                                    </button>
+                                </div>
                             </form>
                         </div>
                     </div>
@@ -64,10 +76,10 @@
                     <div class="card">
                         <div class="card-body">
                             <h5 class="card-title mb-4">Change Password</h5>
-                            
+
                             {% if password_updated %}
                             <div class="alert alert-success">
-                                Your password has been updated successfully.
+                                Your password has been changed successfully.
                             </div>
                             {% endif %}
 
@@ -79,36 +91,17 @@
 
                             <form method="post" action="{% url 'change_password' %}">
                                 {% csrf_token %}
+                                {% for field in form %}
                                 <div class="mb-3">
-                                    <label class="form-label">Current Password</label>
-                                    <input type="password" name="old_password" class="form-control" required>
-                                    {% if form.old_password.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.old_password.errors.0 }}
+                                    <label class="form-label">{{ field.label }}</label>
+                                    {{ field }}
+                                    {% if field.errors %}
+                                    <div class="text-danger">
+                                        {{ field.errors|join:", " }}
                                     </div>
                                     {% endif %}
                                 </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">New Password</label>
-                                    <input type="password" name="new_password1" class="form-control" required>
-                                    {% if form.new_password1.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.new_password1.errors.0 }}
-                                    </div>
-                                    {% endif %}
-                                </div>
-                                
-                                <div class="mb-3">
-                                    <label class="form-label">Confirm New Password</label>
-                                    <input type="password" name="new_password2" class="form-control" required>
-                                    {% if form.new_password2.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {{ form.new_password2.errors.0 }}
-                                    </div>
-                                    {% endif %}
-                                </div>
-
+                                {% endfor %}
                                 <button type="submit" class="btn btn-primary">Change Password</button>
                             </form>
                         </div>
@@ -118,4 +111,62 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteAccountModalLabel">Delete Account</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-danger">
+                    <h6 class="alert-heading">Warning!</h6>
+                    <p class="mb-0">This action cannot be undone. All your data will be permanently deleted.</p>
+                </div>
+
+                <form method="post" action="{% url 'delete_account' %}" id="deleteAccountForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label">Type DELETE to confirm</label>
+                        <input type="text" name="confirmation" class="form-control" required>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash me-2"></i>Delete Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .form-control {
+        max-width: 100%;
+    }
+    #id_old_password,
+    #id_new_password1,
+    #id_new_password2 {
+        display: block;
+        width: 100%;
+        padding: 0.375rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #212529;
+        background-color: #fff;
+        background-clip: padding-box;
+        border: 1px solid #ced4da;
+        border-radius: 0.25rem;
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    .modal-header .btn-close {
+        filter: brightness(0) invert(1);
+    }
+</style>
 {% endblock %} 
