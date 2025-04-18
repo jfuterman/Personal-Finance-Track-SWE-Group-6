@@ -4,9 +4,14 @@
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2>Recent Transactions</h2>
-        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
-            <i class="bi bi-plus-lg"></i> Add Transaction
-        </button>
+        <div>
+            <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                <i class="bi bi-plus-lg"></i> Add Transaction
+            </button>
+            <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deletedTransactionsModal">
+                View Deleted Transactions
+            </button>
+        </div>
     </div>
 
     <!-- Filters -->
@@ -153,4 +158,54 @@
         </div>
     </div>
 </div>
+<!-- Deleted Transactions Modal -->
+<div class="modal fade" id="deletedTransactionsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Deleted Transactions (Last 30 Days)</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          {% if deleted_transactions %}
+          <div class="table-responsive">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Item</th>
+                  <th>Shop</th>
+                  <th>Amount</th>
+                  <th>Deleted At</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for transaction in deleted_transactions %}
+                <tr>
+                  <td>{{ transaction.date }}</td>
+                  <td>{{ transaction.item_name }}</td>
+                  <td>{{ transaction.shop_name }}</td>
+                  <td>${{ transaction.amount }}</td>
+                  <td>{{ transaction.deleted_at|date:"m-d-Y" }}</td>
+                  <td>
+                    <form method="post" action="{% url 'restore_transaction' transaction.id %}">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-sm btn-outline-success">
+                        <i class="bi bi-arrow-counterclockwise"></i> Restore
+                      </button>
+                    </form>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <p class="text-muted">No deleted transactions in the last 30 days.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock %} 

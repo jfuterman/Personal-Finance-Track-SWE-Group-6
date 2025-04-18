@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.db.models import Sum
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from datetime import timedelta
 
 class BankAccount(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -99,6 +100,16 @@ class Transaction(models.Model):
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
     category = models.CharField(max_length=20, choices=CATEGORIES, default='Others')
     
+    category = models.CharField(max_length=20, choices=CATEGORIES, default='Others')
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+
+    def is_expired(self):
+        if not self.deleted_at:
+            return False
+        return timezone.now() > self.deleted_at + timedelta(days=30)
+ 
+
     class Meta:
         ordering = ['-date']
     
