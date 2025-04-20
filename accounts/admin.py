@@ -4,10 +4,24 @@ from django.contrib.auth.admin import UserAdmin
 
 @admin.register(Goal)
 class GoalAdmin(admin.ModelAdmin):
-    list_display = ('title', 'category', 'target_amount', 'achieved_amount', 'progress_percentage', 'start_date', 'end_date')
-    list_filter = ('category', 'start_date', 'end_date')
-    search_fields = ('title', 'description')
-    ordering = ('end_date', 'category') 
+    list_display = (
+        'title',
+        'monthly_target',
+        'achieved_amount',
+        'monthly_progress_percentage',
+        'created_at',
+        'updated_at',
+    )
+    list_filter = (
+        'created_at',
+        'updated_at',
+    )
+    search_fields = (
+        'title',
+    )
+    ordering = (
+        '-created_at',
+    )
 
 class CustomUserAdmin(UserAdmin):
     model = CustomUser

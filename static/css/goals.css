@@ -1,161 +1,118 @@
-/* Goals Page Styles */
+.goals-page h3 {
+  font-size: 1.75rem;      
+  font-weight: 600;        
+  margin-bottom: 1.5rem;
+  color: #1e293b;          
+}
+
+.card {
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.add_card {
+  border: none;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+.card-body,
+.card .p-3,
+.card .p-4 {
+  padding: 1.5rem;
+}
+
+.add-goal-card {
+  background: #f8f9fa;
+  border: 2px dashed #e2e8f0;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.add-goal-card:hover {
+  background: #e2e8f0;
+}
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 .goal-card {
-    background: white;
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.date-selector {
-    background: white;
-    border: 1px solid #E5E7EB;
-    border-radius: 6px;
-    padding: 8px 12px;
-    font-size: 14px;
+.goal-card h5,
+.category-card h5 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #0f172a; 
 }
 
-.savings-info {
-    margin-bottom: 24px;
-}
-
-.savings-info .label {
-    color: #6B7280;
-    font-size: 14px;
-    margin-bottom: 8px;
-    display: flex;
-    align-items: center;
-}
-
-.savings-info .value {
-    font-size: 24px;
-    font-weight: 600;
-    color: #111827;
-}
-
-.adjust-btn {
-    color: #2563EB;
-    background: transparent;
-    border: 1px solid #2563EB;
-    border-radius: 6px;
-    padding: 8px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
-}
-
-.adjust-btn:hover {
-    background: #2563EB;
-    color: white;
-}
-
-.category-card {
-    background: white;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    transition: transform 0.2s ease;
-}
-
-.category-card:hover {
-    transform: translateY(-2px);
-}
-
-.category-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.category-name {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #6B7280;
-}
-
-.category-amount {
-    font-size: 20px;
-    font-weight: 600;
-    color: #111827;
-    margin-bottom: 8px;
-}
-
-.progress-container {
-    margin-top: 12px;
-}
-
-.progress-bar-container {
-    width: 100%;
-    height: 6px;
-    background-color: #E5E7EB;
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: #2563EB;
-    border-radius: 3px;
-    transition: width 0.3s ease;
-}
-
-.progress-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 4px;
-    font-size: 12px;
-    color: #6B7280;
-}
-
-.chart-container {
-    height: 200px;
-    position: relative;
-}
-
-/* Modal Styles */
-.modal-content {
-    border-radius: 12px;
-    border: none;
-}
-
-.modal-header {
-    border-bottom: 1px solid #E5E7EB;
-    padding: 16px 24px;
-}
-
-.modal-body {
-    padding: 24px;
-}
-
-.modal-footer {
-    border-top: 1px solid #E5E7EB;
-    padding: 16px 24px;
-}
-
-.form-label {
-    font-weight: 500;
-    color: #374151;
-}
-
-.form-control {
-    border-color: #E5E7EB;
-    border-radius: 6px;
-    padding: 8px 12px;
-}
-
-.form-control:focus {
-    border-color: #2563EB;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+.goal-card h4,
+.category-card h5.fw-bold {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: #1e293b; 
 }
 
 .text-muted {
-    font-size: 12px;
-    margin-top: 4px;
-} 
+  color: #64748b !important;
+  font-size: 0.875rem;
+}
+
+.progress {
+  background-color: #f1f5f9;
+  border-radius: 0.375rem;
+  overflow: hidden;
+  height: 1.5rem;
+}
+.progress-bar {
+  background-color: #2563eb; 
+  transition: width 0.6s ease;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.form-select,
+.form-control {
+  padding: 0.5rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+}
+
+#modalError {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .goals-page h3 {
+    font-size: 1.5rem;
+  }
+  .goal-card h5,
+  .category-card h5 {
+    font-size: 1.125rem;
+  }
+  .goal-card h4,
+  .category-card h5.fw-bold {
+    font-size: 1.25rem;
+  }
+}
