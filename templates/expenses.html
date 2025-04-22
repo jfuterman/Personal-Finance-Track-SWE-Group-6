@@ -10,22 +10,6 @@
 <div class="container-fluid py-4">
     <h2 class="mb-4">Expenses Comparison</h2>
 
-    <!-- Monthly Comparison Graph -->
-    <div class="card mb-4">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title">Total Expenses</h5>
-                <select id="timeRangeSelect" class="form-select" style="width: auto;">
-                    <option value="monthly">Monthly View</option>
-                    <option value="yearly">Yearly View</option>
-                </select>
-            </div>
-            <div class="chart-container">
-                <canvas id="expensesChart"></canvas>
-            </div>
-        </div>
-    </div>
-
     <!-- Hidden data for JavaScript -->
     <script id="graphData" type="application/json">
         {{ graph_data|safe }}
@@ -35,9 +19,9 @@
     </script>
 
     <!-- Expenses Breakdown -->
-    <h3 class="mb-4">Expenses Breakdown</h3>
+    <h3 class="mb-4">Expenses Breakdown for {{current_date|date:"F"}}</h3>
     <div class="row">
-        {% for expense in expense_breakdown %}
+        {% for expense in expense_breakdown_month %}
         <div class="col-md-4 mb-4">
             <div class="card expense-card" data-category="{{ expense.category|slugify }}" onclick="toggleDetails('{{ expense.category|slugify }}')">
                 <div class="card-body">
@@ -69,7 +53,7 @@
                         </span>
                         {% endif %}
                         <span>{{ expense.percentage }}%</span>
-                        <small class="text-muted ms-2">of total expenses</small>
+                        <small class="text-muted ms-2">of this month's expenses</small>
                     </div>
 
                     <!-- Expense Details -->
@@ -103,6 +87,21 @@
             </div>
         </div>
         {% endfor %}
+    </div>
+    <!-- Monthly Comparison Graph -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title">Total Expenses</h5>
+                <select id="timeRangeSelect" class="form-select" style="width: auto;">
+                    <option value="monthly">Monthly View</option>
+                    <option value="yearly">Yearly View</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="expensesChart"></canvas>
+            </div>
+        </div>
     </div>
 </div>
 

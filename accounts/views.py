@@ -349,6 +349,13 @@ def expenses(request):
         transaction_type='expense',
         date__gte=start_date
     ).order_by('date')
+
+    # Get this month's expenses from first of month until today
+    this_month = Transaction.objects.filter(
+        user=request.user,
+        transaction_type='expense',
+        date__gte=current_date.replace(day=1)
+    ).order_by('category')
     
     print(f"Found {expenses.count()} expenses")
     
@@ -400,6 +407,26 @@ def expenses(request):
     
     print("Monthly Data:", json.dumps(graph_data, indent=2))
     print("Yearly Data:", json.dumps(yearly_graph_data, indent=2))
+
+    # Categorize this month's expenses
+    categorized_expenses_month = defaultdict(float)
+    for expense in this_month:
+        category = expense.category
+        amount = float(expense.amount)
+        categorized_expenses_month[category] += amount 
+    
+    total_expenses_month = sum(categorized_expenses_month.values())
+    expense_breakdown_month = []
+    categories = ['Housing', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Others']
+    
+    for category in categories:
+        amount = categorized_expenses_month[category]
+        percentage = (amount / total_expenses_month * 100) if total_expenses_month > 0 else 0
+        expense_breakdown_month.append({
+            'category': category,
+            'amount': amount,
+            'percentage': round(percentage, 1)
+        })
     
     # Categorize recent expenses
     recent_expenses = expenses.order_by('-date')[:20]  # Last 20 expenses
@@ -422,7 +449,6 @@ def expenses(request):
     # Calculate total and percentages
     total_expenses = sum(categorized_expenses.values())
     expense_breakdown = []
-    categories = ['Housing', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Others']
     
     for category in categories:
         amount = categorized_expenses[category]
@@ -436,11 +462,13 @@ def expenses(request):
     
     context = {
         'active_tab': 'expenses',
-        'current_date': current_date.strftime('%B %d, %Y'),
+        'current_date': current_date,
         'graph_data': json.dumps(graph_data),
         'yearly_data': json.dumps(yearly_graph_data),
         'expense_breakdown': expense_breakdown,
-        'total_expenses': total_expenses
+        'expense_breakdown_month': expense_breakdown_month,
+        'total_expenses': total_expenses,
+        'this_month_expenses': this_month
     }
     
     return render(request, 'expenses.html', context)
