@@ -221,6 +221,20 @@ def delete_transaction(request, transaction_id):
     return redirect('transactions')
 
 @login_required
+def edit_transaction(request, transaction_id):
+    if request.method == 'POST':
+        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+        transaction.transaction_type = request.POST['transaction_type']
+        transaction.item_name = request.POST['item_name']
+        transaction.shop_name = request.POST['shop_name']
+        transaction.amount = request.POST['amount']
+        transaction.date = request.POST['date']
+        transaction.payment_method = request.POST['payment_method']
+        transaction.category = request.POST['category']
+        transaction.save()
+    return redirect('transactions')
+
+@login_required
 def bills(request):
     current_date = timezone.now().strftime('%B %d, %Y')
     bills = Bill.objects.filter(user=request.user).order_by('due_date')
@@ -254,6 +268,25 @@ def remove_bill(request, bill_id):
     if request.method == 'POST':
         bill = get_object_or_404(Bill, id=bill_id, user=request.user)
         bill.delete()
+    return redirect('bills')
+
+@login_required
+def edit_bill(request, bill_id):
+    if request.method == 'POST':
+        bill = get_object_or_404(Bill, id=bill_id, user=request.user)
+        bill.item_name = request.POST['item_name']
+        bill.description = request.POST['description']
+        bill.amount = request.POST['amount']
+        bill.due_date = request.POST['due_date']
+        bill.website_url = request.POST['website_url']
+        
+        if request.POST.get('last_charge'):
+            bill.last_charge = request.POST['last_charge']
+        else:
+            bill.last_charge = None
+            
+        bill.save()  # This will trigger the logo search in the save method
+        
     return redirect('bills')
 
 @login_required
@@ -473,8 +506,12 @@ def delete_goal(request, goal_id):
 
 @login_required
 def settings(request):
+    current_date = timezone.now().strftime('%B %d, %Y')
     form = CustomPasswordChangeForm(request.user)
-    return render(request, 'settings.html', {'form': form})
+    return render(request, 'settings.html', {
+        'form': form,
+        'current_date': current_date
+    })
 
 @login_required
 def update_account(request):
@@ -528,6 +565,21 @@ def adjust_goal(request, category):
         except ValueError:
             messages.error(request, 'Please enter valid numbers for target amounts.')
     return redirect('goals')
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        confirmation = request.POST.get('confirmation', '').strip()
+        if confirmation == 'DELETE':
+            user = request.user
+            user.delete()
+            return redirect('login')
+        else:
+            return render(request, 'settings.html', {
+                'delete_error': 'Please type DELETE exactly to confirm account deletion.',
+                'form': CustomPasswordChangeForm(request.user)
+            })
+    return redirect('settings')
 
 def home(request):
     return render(request, 'home.html') 
