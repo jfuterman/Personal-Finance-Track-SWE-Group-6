@@ -72,7 +72,7 @@
                             <td>{{ transaction.item_name }}</td>
                             <td>{{ transaction.shop_name }}</td>
                             <td>${{ transaction.amount }}</td>
-                            <td>{{ transaction.get_payment_method_display }}</td>
+                            <td>{{ transaction.payment_method }}</td>
                             <td>
                                 <div class="d-flex gap-2">
                                     <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editTransactionModal{{ transaction.id }}">

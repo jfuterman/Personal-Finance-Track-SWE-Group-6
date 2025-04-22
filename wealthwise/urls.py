@@ -43,5 +43,6 @@ urlpatterns = [
     path('adjust-goal/<str:category>/', adjust_goal, name='adjust_goal'),
     path('transactions/deleted/', deleted_transactions, name='deleted_transactions'),
     path('transactions/restore/<int:transaction_id>/', restore_transaction, name='restore_transaction'),
+
     path('delete-account/', delete_account, name='delete_account'),
 ] 

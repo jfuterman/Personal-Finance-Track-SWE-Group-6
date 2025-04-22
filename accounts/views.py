@@ -270,6 +270,20 @@ def edit_transaction(request, transaction_id):
     return redirect('transactions')
 
 @login_required
+def edit_transaction(request, transaction_id):
+    if request.method == 'POST':
+        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+        transaction.transaction_type = request.POST['transaction_type']
+        transaction.item_name = request.POST['item_name']
+        transaction.shop_name = request.POST['shop_name']
+        transaction.amount = request.POST['amount']
+        transaction.date = request.POST['date']
+        transaction.payment_method = request.POST['payment_method']
+        transaction.category = request.POST['category']
+        transaction.save()
+    return redirect('transactions')
+
+@login_required
 def bills(request):
     current_date = timezone.now().strftime('%B %d, %Y')
     bills = Bill.objects.filter(user=request.user).order_by('due_date')
