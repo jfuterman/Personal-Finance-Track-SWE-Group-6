@@ -124,53 +124,21 @@ class CustomUser(AbstractUser):
         return self.username
 
 class Goal(models.Model):
-    GOAL_CATEGORIES = [
-        ('savings', 'Savings'),
-        ('housing', 'Housing'),
-        ('food', 'Food'),
-        ('transportation', 'Transportation'),
-        ('entertainment', 'Entertainment'),
-        ('shopping', 'Shopping'),
-        ('others', 'Others'),
-    ]
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    category = models.CharField(max_length=50, choices=GOAL_CATEGORIES)
-    target_amount = models.DecimalField(max_digits=10, decimal_places=2)
-    achieved_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     monthly_target = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    start_date = models.DateField()
-    end_date = models.DateField()
-    description = models.TextField(blank=True)
+    achieved_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-    def progress_percentage(self):
-        if self.target_amount == 0:
-            return 0.00
-        return round((float(self.achieved_amount) / float(self.target_amount)) * 100, 2)
 
     def monthly_progress_percentage(self):
         if self.monthly_target == 0:
             return 0.00
-        # Calculate this month's achieved amount
-        current_month = timezone.now().month
-        current_year = timezone.now().year
-        monthly_achieved = Transaction.objects.filter(
-            user=self.user,
-            date__month=current_month,
-            date__year=current_year,
-            transaction_type='expense' if self.category != 'savings' else 'revenue'
-        ).aggregate(Sum('amount'))['amount__sum'] or 0
-        return round((float(monthly_achieved) / float(self.monthly_target)) * 100, 2)
+        return round((float(self.achieved_amount) / float(self.monthly_target)) * 100, 2)
 
     def __str__(self):
-        return f"{self.title} - {self.category} (${self.target_amount})"
-
-    class Meta:
-        ordering = ['end_date'] 
-
+        return f"{self.title} (${self.monthly_target}/mo)"
+    
 class Settings(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     email_preferences = models.BooleanField(default=True)

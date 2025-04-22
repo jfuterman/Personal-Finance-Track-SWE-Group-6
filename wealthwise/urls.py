@@ -26,6 +26,8 @@ urlpatterns = [
     path('bills/', bills, name='bills'),
     path('expenses/', expenses, name='expenses'),
     path('goals/', goals, name='goals'),
+    path('goals/<int:goal_id>/adjust/', adjust_goal,   name='adjust_goal'),
+    path('goals/<int:goal_id>/delete/',  delete_goal,   name='delete_goal'),
     path('settings/', settings, name='settings'),
     path('update-account/', update_account, name='update_account'),
     path('change-password/', change_password, name='change_password'),
@@ -43,6 +45,5 @@ urlpatterns = [
     path('adjust-goal/<str:category>/', adjust_goal, name='adjust_goal'),
     path('transactions/deleted/', deleted_transactions, name='deleted_transactions'),
     path('transactions/restore/<int:transaction_id>/', restore_transaction, name='restore_transaction'),
-
     path('delete-account/', delete_account, name='delete_account'),
 ] 

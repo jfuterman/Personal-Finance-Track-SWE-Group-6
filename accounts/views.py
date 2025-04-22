@@ -44,17 +44,17 @@ def overview(request):
     total_balance = BankAccount.objects.filter(user=request.user).aggregate(
         total=Sum('balance'))['total'] or 0
     
-    # Get current goals
-    goals = Goal.objects.filter(user=request.user)
-    savings_goal = goals.filter(category='savings').first()
-    if savings_goal:
-        target_achieved = savings_goal.achieved_amount
-        monthly_target = savings_goal.monthly_target
-        progress = savings_goal.monthly_progress_percentage()
-    else:
-        target_achieved = 0
-        monthly_target = 0
-        progress = 0
+    # # Get current goals
+    # goals = Goal.objects.filter(user=request.user)
+    # savings_goal = goals.filter(category='savings').first()
+    # if savings_goal:
+    #     target_achieved = savings_goal.achieved_amount
+    #     monthly_target = savings_goal.monthly_target
+    #     progress = savings_goal.monthly_progress_percentage()
+    # else:
+    #     target_achieved = 0
+    #     monthly_target = 0
+    #     progress = 0
     
     # Get upcoming bills
     upcoming_bills = Bill.objects.filter(
@@ -121,9 +121,9 @@ def overview(request):
         'active_tab': 'overview',
         'current_date': current_date.strftime('%B %d, %Y'),
         'total_balance': total_balance,
-        'target_achieved': target_achieved,
-        'monthly_target': monthly_target,
-        'progress': progress,
+        # 'target_achieved': target_achieved,
+        # 'monthly_target': monthly_target,
+        # 'progress': progress,
         'upcoming_bills': upcoming_bills,
         'recent_transactions': recent_transactions,
         'weekly_stats': weekly_stats,
@@ -446,114 +446,6 @@ def expenses(request):
     return render(request, 'expenses.html', context)
 
 @login_required
-def goals(request):
-    current_date = timezone.now()
-    
-    # Get or create default goals for each category
-    categories = ['savings', 'housing', 'food', 'transportation', 'entertainment', 'shopping', 'others']
-    for category in categories:
-        # Clean up duplicate goals
-        existing_goals = Goal.objects.filter(user=request.user, category=category)
-        if existing_goals.count() > 1:
-            # Keep the first goal and delete the rest
-            first_goal = existing_goals.first()
-            existing_goals.exclude(id=first_goal.id).delete()
-        elif existing_goals.count() == 0:
-            # Create new goal if none exists
-            Goal.objects.create(
-                user=request.user,
-                category=category,
-                title=f"{category.title()} Goal",
-                target_amount=3000,
-                monthly_target=250,
-                start_date=current_date,
-                end_date=current_date.replace(year=current_date.year + 1)
-            )
-    
-    # Get all goals
-    goals = Goal.objects.filter(user=request.user)
-    savings_goal = goals.filter(category='savings').first()
-    expense_goals = goals.exclude(category='savings')
-    
-    # Calculate daily savings data
-    daily_savings = []
-    current_month_days = []
-    start_date = current_date.replace(day=1)
-    end_date = (start_date + timedelta(days=32)).replace(day=1) - timedelta(days=1)
-    
-    day = start_date
-    while day <= end_date:
-        amount = Transaction.objects.filter(
-            user=request.user,
-            transaction_type='revenue',
-            date=day
-        ).aggregate(Sum('amount'))['amount__sum'] or 0
-        daily_savings.append(float(amount))
-        current_month_days.append(day.strftime('%b %d'))
-        day += timedelta(days=1)
-    
-    # Generate available months for selection
-    available_months = []
-    for i in range(6):
-        month_date = current_date - timedelta(days=30*i)
-        available_months.append({
-            'value': month_date.strftime('%Y-%m'),
-            'label': month_date.strftime('%b %Y'),
-            'current': i == 0
-        })
-    
-    context = {
-        'active_tab': 'goals',
-        'savings_goal': savings_goal,
-        'expense_goals': expense_goals,
-        'daily_savings': daily_savings,
-        'current_month_days': json.dumps(current_month_days),
-        'current_month': current_date.strftime('%b %Y'),
-        'month_range': f"{start_date.strftime('%d %b')} - {end_date.strftime('%d %b')}",
-        'available_months': available_months
-    }
-    return render(request, 'goals.html', context)
-
-@login_required
-def add_goal(request):
-    if request.method == 'POST':
-        goal = Goal(
-            user=request.user,
-            title=request.POST['title'],
-            category=request.POST['category'],
-            target_amount=request.POST['target_amount'],
-            achieved_amount=request.POST.get('achieved_amount', 0),
-            start_date=request.POST['start_date'],
-            end_date=request.POST['end_date'],
-            description=request.POST.get('description', '')
-        )
-        goal.save()
-    return redirect('goals')
-
-@login_required
-def edit_goal(request, goal_id):
-    goal = get_object_or_404(Goal, id=goal_id, user=request.user)
-    
-    if request.method == 'POST':
-        goal.title = request.POST['title']
-        goal.category = request.POST['category']
-        goal.target_amount = request.POST['target_amount']
-        goal.achieved_amount = request.POST['achieved_amount']
-        goal.start_date = request.POST['start_date']
-        goal.end_date = request.POST['end_date']
-        goal.description = request.POST.get('description', '')
-        goal.save()
-        
-    return redirect('goals')
-
-@login_required
-def delete_goal(request, goal_id):
-    if request.method == 'POST':
-        goal = get_object_or_404(Goal, id=goal_id, user=request.user)
-        goal.delete()
-    return redirect('goals')
-
-@login_required
 def settings(request):
     current_date = timezone.now().strftime('%B %d, %Y')
     form = CustomPasswordChangeForm(request.user)
@@ -597,22 +489,77 @@ def change_password(request):
     return redirect('settings')
 
 @login_required
-def adjust_goal(request, category):
-    if request.method == 'POST':
-        goal = get_object_or_404(Goal, user=request.user, category=category)
+def goals(request):
+    if request.method == 'POST' and request.POST.get('action') == 'add':
+        title = request.POST.get('title', '').strip()
+        monthly_str  = request.POST.get('monthly_target', '0')
+        achieved_str = request.POST.get('achieved_amount', '0')
+
         try:
-            monthly_target = float(request.POST.get('monthly_target', goal.monthly_target))
-            target_amount = float(request.POST.get('target_amount', goal.target_amount))
-            
-            if monthly_target < 0 or target_amount < 0:
-                messages.error(request, 'Target amounts cannot be negative.')
-            else:
-                goal.monthly_target = monthly_target
-                goal.target_amount = target_amount
-                goal.save()
-                messages.success(request, f'{category.title()} goal updated successfully!')
-        except ValueError:
-            messages.error(request, 'Please enter valid numbers for target amounts.')
+            if not title:
+                raise ValueError("Please provide a goal title.")
+            monthly = float(monthly_str)
+            achieved = float(achieved_str)
+            if monthly < 0 or achieved < 0:
+                raise ValueError("Values cannot be negative.")
+            Goal.objects.create(
+                user=request.user,
+                title=title,
+                monthly_target=monthly,
+                achieved_amount=achieved
+            )
+            messages.success(request, "Goal added successfully!")
+        except ValueError as e:
+            messages.error(request, str(e))
+
+        return redirect('goals')
+
+    goals_qs = Goal.objects.filter(user=request.user)
+    overall_target   = sum(float(g.monthly_target)   for g in goals_qs)
+    overall_achieved = sum(float(g.achieved_amount)  for g in goals_qs)
+    overall_progress = round((overall_achieved / overall_target) * 100, 2) if overall_target > 0 else 0
+
+    return render(request, 'goals.html', {
+        'active_tab':       'goals',
+        'goals':            goals_qs,
+        'overall_target':   overall_target,
+        'overall_achieved': overall_achieved,
+        'overall_progress': overall_progress,
+    })
+
+@login_required
+def adjust_goal(request, goal_id):
+    goal = get_object_or_404(Goal, id=goal_id, user=request.user)
+
+    if request.method == 'POST':
+        title        = request.POST.get('title', goal.title).strip()
+        monthly_str  = request.POST.get('monthly_target', goal.monthly_target)
+        achieved_str = request.POST.get('achieved_amount', goal.achieved_amount)
+
+        try:
+            if not title:
+                raise ValueError("Title cannot be empty.")
+            monthly = float(monthly_str)
+            achieved= float(achieved_str)
+            if monthly < 0 or achieved < 0:
+                raise ValueError("Values cannot be negative.")
+
+            goal.title           = title
+            goal.monthly_target  = monthly
+            goal.achieved_amount = achieved
+            goal.save()
+            messages.success(request, "Goal updated successfully!")
+        except ValueError as e:
+            messages.error(request, str(e))
+
+    return redirect('goals')
+
+@login_required
+def delete_goal(request, goal_id):
+    goal = get_object_or_404(Goal, id=goal_id, user=request.user)
+    if request.method == 'POST':
+        goal.delete()
+        messages.success(request, "Goal deleted")
     return redirect('goals')
 
 @login_required
