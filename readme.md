@@ -24,9 +24,20 @@ Create a .env file following the .env.example file. You'll need to ask your team
 
 ### Launch the Server
 
+#### Using Docker
 If you've got Docker installed on your computer, run `docker compose up --build`. This will spin up the database and Django, and you can visit the app at `http://localhost:8000/`. You're done!
 
-If you don't have Docker, create your virtual environment and install the dependencies. Depending on your system and version of Python, you'll run `python -m venv .venv` to create the virtual environment and then `source .venv/bin/activate` to activate it. Then, run `pip install -r requirements.txt` to install the project dependencies.
+#### Using Virtual Environment
+If you don't have Docker, create your virtual environment and install the dependencies.
+
+Create a new virtual environment:\
+`python -m venv .venv`
+
+Activate the new virtual environment:\
+  For Unix/macOS: `source .venv/bin/activate`\
+  For Windows:  `.venv\Scripts\activate`
+
+Then, run `pip install -r requirements.txt` to install the project dependencies.
 
 If not using Docker, head to the root folder and run `python manage.py makemigrations`, then `python manage.py migrate`, then `python manage.py runserver`. You started the Django server. You're done!
 
