@@ -16,11 +16,13 @@ We use Docker to manage development.
 
 ## Using the project
 
-Get started by cloning this repository. Right now, we really recommend you install Docker -- it will save you a lot of headaches.
+Get started by cloning this repository. We really recommend you install Docker -- it will save you a lot of headaches.
 
 ### .env file
 
-Create a .env file following the .env.example file. You'll need to ask your teammates or configure your own database. If you are using Docker, your `DB_HOST` variable should be `db`. If you are not using Docker, `DB_HOST` should be `localhost`.
+Create a .env file following the .env.example file. You'll need to ask your teammates or configure your own database. \
+If you are using Docker, your `DB_HOST` variable should be `db`. If not, `DB_HOST` should be `localhost`.\
+Add your own values for `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` variables in the .env file.
 
 ### Launch the Server
 
