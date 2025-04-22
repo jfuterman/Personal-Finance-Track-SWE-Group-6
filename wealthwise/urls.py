@@ -9,6 +9,8 @@ from accounts.views import (
 )
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
+from accounts.views import deleted_transactions
+from accounts.views import restore_transaction
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,5 +41,8 @@ urlpatterns = [
     path('edit-goal/<int:goal_id>/', edit_goal, name='edit_goal'),
     path('delete-goal/<int:goal_id>/', delete_goal, name='delete_goal'),
     path('adjust-goal/<str:category>/', adjust_goal, name='adjust_goal'),
+    path('transactions/deleted/', deleted_transactions, name='deleted_transactions'),
+    path('transactions/restore/<int:transaction_id>/', restore_transaction, name='restore_transaction'),
+
     path('delete-account/', delete_account, name='delete_account'),
 ] 

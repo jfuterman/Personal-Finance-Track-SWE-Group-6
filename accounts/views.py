@@ -17,6 +17,7 @@ from collections import defaultdict
 import json
 from django.db.models import Sum
 from django.contrib import messages
+from datetime import timedelta
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
@@ -175,26 +176,36 @@ def remove_account(request, account_id):
 @login_required
 def transactions(request):
     current_date = timezone.now().strftime('%B %d, %Y')
-    transactions = Transaction.objects.filter(user=request.user)
-    
-    # Apply filters
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+
+    active_transactions = Transaction.objects.filter(
+        user=request.user,
+        is_deleted=False
+    )
+
+    deleted_transactions = Transaction.objects.filter(
+        user=request.user,
+        is_deleted=True,
+        deleted_at__gte=thirty_days_ago
+    )
+
+    # Filters
     transaction_type = request.GET.get('transaction_type')
     from_date = request.GET.get('from_date')
     to_date = request.GET.get('to_date')
-    
+
     if transaction_type:
-        transactions = transactions.filter(transaction_type=transaction_type)
-    
+        active_transactions = active_transactions.filter(transaction_type=transaction_type)
     if from_date:
-        transactions = transactions.filter(date__gte=from_date)
-    
+        active_transactions = active_transactions.filter(date__gte=from_date)
     if to_date:
-        transactions = transactions.filter(date__lte=to_date)
-    
+        active_transactions = active_transactions.filter(date__lte=to_date)
+
     return render(request, 'transactions.html', {
         'active_tab': 'transactions',
         'current_date': current_date,
-        'transactions': transactions
+        'transactions': active_transactions,
+        'deleted_transactions': deleted_transactions,
     })
 
 @login_required
@@ -214,10 +225,48 @@ def add_transaction(request):
     return redirect('transactions')
 
 @login_required
+def deleted_transactions(request):
+    thirty_days_ago = timezone.now() - timedelta(days=30)
+    transactions = Transaction.objects.filter(
+        user=request.user,
+        is_deleted=True,
+        deleted_at__gte=thirty_days_ago
+    ).order_by('-deleted_at')
+
+    return render(request, 'deleted_transactions.html', {
+        'active_tab': 'deleted_transactions',
+        'transactions': transactions
+    })
+@login_required
+def restore_transaction(request, transaction_id):
+    if request.method == 'POST':
+        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+        transaction.is_deleted = False
+        transaction.deleted_at = None
+        transaction.save()
+    return redirect('transactions')
+
+@login_required
 def delete_transaction(request, transaction_id):
     if request.method == 'POST':
         transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
-        transaction.delete()
+        transaction.is_deleted = True
+        transaction.deleted_at = timezone.now()
+        transaction.save()
+    return redirect('transactions')
+
+@login_required
+def edit_transaction(request, transaction_id):
+    if request.method == 'POST':
+        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
+        transaction.transaction_type = request.POST['transaction_type']
+        transaction.item_name = request.POST['item_name']
+        transaction.shop_name = request.POST['shop_name']
+        transaction.amount = request.POST['amount']
+        transaction.date = request.POST['date']
+        transaction.payment_method = request.POST['payment_method']
+        transaction.category = request.POST['category']
+        transaction.save()
     return redirect('transactions')
 
 @login_required
@@ -580,9 +629,6 @@ def delete_account(request):
                 'form': CustomPasswordChangeForm(request.user)
             })
     return redirect('settings')
-
-def home(request):
-    return render(request, 'home.html') 
 
 def home(request):
     return render(request, 'home.html') 
