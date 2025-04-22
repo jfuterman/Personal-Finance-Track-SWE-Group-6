@@ -5,6 +5,9 @@ from .models import BankAccount, Bill, Transaction, Goal
 from .forms import CustomUserCreationForm, UserUpdateForm, CustomPasswordChangeForm
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
+import json
+from django.utils import timezone
+from datetime import timedelta
 
 class TestViews(TestCase):
     def setUp(self):
@@ -243,6 +246,81 @@ class TestViews(TestCase):
             User = get_user_model()
             updated_user = User.objects.get(id=self.user.id)
             self.assertEqual(updated_user.first_name, 'Updated')
+
+    def test_redirect_if_not_logged_in(self):
+        response = self.client.get(self.url)
+        self.assertRedirects(response, f'/accounts/login/?next={self.url}')
+
+    def test_view_with_logged_in_user_and_no_transactions(self):
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'expenses.html')
+
+        # Context checks
+        self.assertIn('graph_data', response.context)
+        self.assertIn('yearly_data', response.context)
+        self.assertIn('expense_breakdown', response.context)
+        self.assertIn('expense_breakdown_month', response.context)
+        self.assertEqual(json.loads(response.context['graph_data'])['values'], [0.0] * 12)
+
+    def test_view_with_sample_expenses(self):
+        self.client.login(username='testuser', password='testpass')
+        now = timezone.now()
+
+        # Create transactions
+        Transaction.objects.create(
+            user=self.user,
+            transaction_type='expense',
+            date=now - timedelta(days=10),
+            amount=100.00,
+            category='Food',
+            item_name='Burger',
+            shop_name='FastFood Inc.'
+        )
+        Transaction.objects.create(
+            user=self.user,
+            transaction_type='expense',
+            date=now - timedelta(days=40),
+            amount=200.00,
+            category='Housing',
+            item_name='Rent',
+            shop_name='Landlord LLC'
+        )
+
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        
+        # Monthly data should have non-zero values
+        monthly_data = json.loads(response.context['graph_data'])
+        self.assertTrue(any(value > 0 for value in monthly_data['values']))
+
+        # Yearly data should include current and previous year
+        yearly_data = json.loads(response.context['yearly_data'])
+        self.assertIn(str(now.year), yearly_data['labels'])
+
+        # Expense breakdown should reflect categories
+        breakdown = response.context['expense_breakdown']
+        categories = [entry['category'] for entry in breakdown if entry['amount'] > 0]
+        self.assertIn('Food', categories)
+        self.assertIn('Housing', categories)
+
+    def test_expenses_are_filtered_by_user(self):
+        other_user = User.objects.create_user(username='otheruser', password='testpass')
+        Transaction.objects.create(
+            user=other_user,
+            transaction_type='expense',
+            date=timezone.now(),
+            amount=999.00,
+            category='Entertainment',
+            item_name='Concert',
+            shop_name='EventPlace'
+        )
+
+        self.client.login(username='testuser', password='testpass')
+        response = self.client.get(self.url)
+        breakdown = response.context['expense_breakdown']
+        self.assertTrue(all(entry['amount'] == 0 for entry in breakdown))
 
 class TestForms(TestCase):
     def setUp(self):
