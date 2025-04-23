@@ -354,7 +354,8 @@ def expenses(request):
     this_month = Transaction.objects.filter(
         user=request.user,
         transaction_type='expense',
-        date__gte=current_date.replace(day=1)
+        date__gte=current_date.replace(day=1),
+        is_deleted=False
     ).order_by('category')
     
     print(f"Found {expenses.count()} expenses")
