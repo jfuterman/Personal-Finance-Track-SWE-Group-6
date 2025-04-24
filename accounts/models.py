@@ -46,7 +46,7 @@ class Bill(models.Model):
         if not self.logo_url:
             # Search for logo using Serper API
             headers = {
-                "X-API-KEY": "45126ead9f1356ae2b5dac62f0adbf09f009728e",
+                "X-API-KEY": "db31eb853fc43fba6c58fc48b6e912bf363765c2",
                 "Content-Type": "application/json"
             }
             payload = {
