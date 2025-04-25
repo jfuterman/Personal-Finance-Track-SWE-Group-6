@@ -40,7 +40,7 @@ class Bill(models.Model):
     due_date = models.DateField()
     last_charge = models.DateField(null=True, blank=True)
     logo_url = models.URLField(max_length=500)
-    website_url = models.URLField(max_length=500)
+    website_url = models.URLField(max_length=500, blank=True, null=True)
     
     def save(self, *args, **kwargs):
         if not self.logo_url:

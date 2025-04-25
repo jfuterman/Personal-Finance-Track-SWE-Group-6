@@ -302,7 +302,7 @@ def add_bill(request):
             description=request.POST['description'],
             amount=request.POST['amount'],
             due_date=request.POST['due_date'],
-            website_url=request.POST['website_url']
+            website_url=request.POST.get('website_url')  # Using get() to handle missing value
         )
         
         if request.POST.get('last_charge'):
@@ -327,7 +327,7 @@ def edit_bill(request, bill_id):
         bill.description = request.POST['description']
         bill.amount = request.POST['amount']
         bill.due_date = request.POST['due_date']
-        bill.website_url = request.POST['website_url']
+        bill.website_url = request.POST.get('website_url')  # Using get() to handle missing value
         
         if request.POST.get('last_charge'):
             bill.last_charge = request.POST['last_charge']
