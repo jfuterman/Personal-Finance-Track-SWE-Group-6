@@ -159,3 +159,19 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+
+# Budgets table holds foreign keys to User and Category; the combination 
+# of User and Category is the primary key. 
+class Budgets(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budgets')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    amount = models.IntegerField()
+
+    # Ensure that the combination of user and category is unique
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['user', 'category'], name='unique_user_category_budget')
+        ]
+
+    def __str__(self):
+        return f'{self.user.username} - {self.category.name} - ${self.amount}'
