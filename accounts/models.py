@@ -165,7 +165,7 @@ class Category(models.Model):
 class Budgets(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='budgets')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    amount = models.IntegerField(null=True, blank=True)
 
     # Ensure that the combination of user and category is unique
     class Meta:
