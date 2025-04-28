@@ -399,16 +399,16 @@ class BudgetAndCategoryTests(TestCase):
         """Test that budget entries are created for all categories when a new user is created."""
         expected_categories = set(Category.objects.values_list('id', flat=True))
 
-        response = self.client.post(reverse('signup'), {
+        response = self.client.post(reverse('register'), {
             'username': 'testuser',
             'password1': 'strongpassword123',
+            'email': 'testuser@example.com',
             'password2': 'strongpassword123',
         })
-
-        self.assertEqual(response.status_code, 302)  # should redirect to 'overview'
-
+        
+        self.assertEqual(response.status_code, 302) 
         user = self.User.objects.get(username='testuser')
-        budgets = Budget.objects.filter(user=user)
+        budgets = Budgets.objects.filter(user=user)
 
         
         self.assertEqual(budgets.count(), len(expected_categories))
