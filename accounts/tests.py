@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from .models import BankAccount, Bill, Transaction, Goal, Category, Budget
+from .models import BankAccount, Bill, Transaction, Goal, Category, Budgets
 from .forms import CustomUserCreationForm, UserUpdateForm, CustomPasswordChangeForm
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
