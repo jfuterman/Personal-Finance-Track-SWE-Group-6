@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.db.models import Q
 from .forms import CustomUserCreationForm, CustomPasswordChangeForm
-from .models import BankAccount, Bill, Transaction, Goal
+from .models import BankAccount, Bill, Transaction, Goal, Category, Budgets
 import random
 from datetime import datetime, timedelta
 from django.contrib.auth.forms import PasswordChangeForm
@@ -33,7 +33,15 @@ class SignUpView(CreateView):
     
     def form_valid(self, form):
         user = form.save()
+        # Log the user in
         login(self.request, user)
+
+        # User is created; now create an entry in the Budget table for each category in 
+        # the Category table. Set initial amount of all categories to None
+        categories = Category.objects.all()
+        for category in categories:
+            Budgets.objects.create(user=user, category=category, amount=None)
+
         return redirect('overview')
 
 @login_required

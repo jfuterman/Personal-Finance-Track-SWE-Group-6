@@ -1,13 +1,15 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-from .models import BankAccount, Bill, Transaction, Goal
+from .models import BankAccount, Bill, Transaction, Goal, Category, Budgets
 from .forms import CustomUserCreationForm, UserUpdateForm, CustomPasswordChangeForm
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.conf import settings
 import json
 from django.utils import timezone
 from datetime import timedelta
+from django.db import connection
+
 
 class TestViews(TestCase):
     def setUp(self):
@@ -375,3 +377,41 @@ class TestForms(TestCase):
         }
         form = UserUpdateForm(data=form_data, instance=user)
         self.assertFalse(form.is_valid()) 
+# Test that when a user is created, they have all categories in budget table, and they are
+# all initially set to None
+# Test that categories table exists with the categories we want
+class BudgetAndCategoryTests(TestCase):
+    def setUp(self):
+        self.User = get_user_model()
+        # Ensure default categories exist before tests
+        if not Category.objects.exists():
+            default_categories = ['Food', 'Housing', 'Other', 'Transportation', 'Entertainment', 'Shopping']
+            for cat in default_categories:
+                Category.objects.create(name=cat)
+
+    def test_default_categories_created(self):
+        """Test that all default categories exist in the database."""
+        expected_categories = {'Food', 'Housing', 'Other', 'Transportation', 'Entertainment', 'Shopping'}
+        actual_categories = set(Category.objects.values_list('name', flat=True))
+        self.assertTrue(expected_categories.issubset(actual_categories))
+
+    def test_budget_created_for_new_user(self):
+        """Test that budget entries are created for all categories when a new user is created."""
+        expected_categories = set(Category.objects.values_list('id', flat=True))
+
+        response = self.client.post(reverse('register'), {
+            'username': 'testuser',
+            'password1': 'strongpassword123',
+            'email': 'testuser@example.com',
+            'password2': 'strongpassword123',
+        })
+        
+        self.assertEqual(response.status_code, 302) 
+        user = self.User.objects.get(username='testuser')
+        budgets = Budgets.objects.filter(user=user)
+
+        
+        self.assertEqual(budgets.count(), len(expected_categories))
+        self.assertTrue(all(b.amount is None for b in budgets))
+        actual_categories = set(budgets.values_list('category', flat=True))
+        self.assertEqual(actual_categories, expected_categories)
