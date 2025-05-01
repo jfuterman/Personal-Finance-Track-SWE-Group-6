@@ -1,4 +1,5 @@
 from django.contrib import admin
+from accounts import views
 from django.urls import path
 from accounts.views import (
     CustomLoginView, SignUpView, overview, balances, transactions,
@@ -42,4 +43,5 @@ urlpatterns = [
     path('transactions/deleted/', deleted_transactions, name='deleted_transactions'),
     path('transactions/restore/<int:transaction_id>/', restore_transaction, name='restore_transaction'),
     path('delete-account/', delete_account, name='delete_account'),
+    path('expenses/budget/<int:category_id>/', views.set_budget, name='set_budget'),
 ] 
