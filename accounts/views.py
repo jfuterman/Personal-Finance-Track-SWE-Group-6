@@ -267,6 +267,7 @@ def delete_transaction(request, transaction_id):
         transaction.save()
     return redirect('transactions')
 
+
 @login_required
 def edit_transaction(request, transaction_id):
     if request.method == 'POST':
@@ -279,20 +280,6 @@ def edit_transaction(request, transaction_id):
         transaction.payment_method = request.POST['payment_method']
         category_name = request.POST['category']
         transaction.category = get_object_or_404(Category, name=category_name)
-        transaction.save()
-    return redirect('transactions')
-
-@login_required
-def edit_transaction(request, transaction_id):
-    if request.method == 'POST':
-        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
-        transaction.transaction_type = request.POST['transaction_type']
-        transaction.item_name = request.POST['item_name']
-        transaction.shop_name = request.POST['shop_name']
-        transaction.amount = request.POST['amount']
-        transaction.date = request.POST['date']
-        transaction.payment_method = request.POST['payment_method']
-        transaction.category = request.POST['category']
         transaction.save()
     return redirect('transactions')
 
@@ -446,9 +433,9 @@ def expenses(request):
     # Categorize this month's expenses
     categorized_expenses_month = defaultdict(float)
     for expense in this_month:
-        category = expense.category
+        category_name = expense.category.name  # string
         amount = float(expense.amount)
-        categorized_expenses_month[category] += amount 
+        categorized_expenses_month[category_name] += amount 
     
     total_expenses_month = sum(categorized_expenses_month.values())
     expense_breakdown_month = []
