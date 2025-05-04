@@ -6,14 +6,16 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+from wealthwise.settings import get_secret
+
 # Load environment variables
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-your-secret-key-here'
+SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -67,11 +69,11 @@ WSGI_APPLICATION = 'wealthwise.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'PORT': os.getenv('DB_PORT', '5432'),
+        'NAME': get_secret("POSTGRES_DB"),
+        'HOST': get_secret("DB_HOST"),
+        'USER': get_secret("POSTGRES_USER"),
+        'PASSWORD': get_secret("POSTGRES_PASSWORD"),
+        'PORT': get_secret("DB_PORT"),
     }
 }
 

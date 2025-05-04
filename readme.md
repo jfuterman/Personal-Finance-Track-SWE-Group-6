@@ -27,17 +27,19 @@ Add your own values for `POSTGRES_DB`, `POSTGRES_USER`, and `POSTGRES_PASSWORD` 
 ### Launch the Server
 
 #### Using Docker
+
 If you've got Docker installed on your computer, run `docker compose up --build`. This will spin up the database and Django, and you can visit the app at `http://localhost:8000/`. You're done!
 
 #### Using Virtual Environment
+
 If you don't have Docker, create your virtual environment and install the dependencies.
 
 Create a new virtual environment:\
 `python -m venv .venv`
 
 Activate the new virtual environment:\
-  For Unix/macOS: `source .venv/bin/activate`\
-  For Windows:  `.venv\Scripts\activate`
+ For Unix/macOS: `source .venv/bin/activate`\
+ For Windows: `.venv\Scripts\activate`
 
 Then, run `pip install -r requirements.txt` to install the project dependencies.
 
@@ -108,6 +110,18 @@ If your branch is out of date, use:
 After PR approval, a designated team member (rotating) merges it into dev.
 
 #### Deployment
+
+To stage for deployment, follow these steps:
+
+1. ensure your .env file has `PIPELINE` set to "production",
+2. in the Dockerfile, ensure that lines below "Only needed for production" are NOT commented out,
+
+Once you have congiured this, run the following from the command line:
+`az acr login --name wealthwise
+docker build -t wealthwise.azurecr.io/wealthwise-app:latest .
+docker push wealthwise.azurecr.io/wealthwise-app:latest`
+
+You shouldn't have to manually stop and restart the app to see your changes. They should be visible shortly after this command.
 
 Code from dev will be deployed to a staging environment.
 
