@@ -12,7 +12,7 @@ This project uses Django and Python. It hosts user data in a database managed wi
 
 ### DevOps
 
-We use Docker to manage development.
+We use Docker to manage development and are hosted with Azure.
 
 ## Using the project
 
@@ -51,10 +51,10 @@ If not using Docker, head to the root folder and run `python manage.py makemigra
 
 All changes will follow this general pattern:
 
-1. Switch to the main branch using `git checkout main`
-2. Use `git pull` to retrieve all of the latest changes to `main`.
+1. Switch to the dev branch using `git checkout dev`
+2. Use `git pull` to retrieve all of the latest changes to `dev`.
 3. Use `git checkout -b <new_branch_name>`. This creates a new branch for you to work off of. Pick a name that describes what you're doing on this branch.
-4. Make your desired changes, committing often. Once the feature is done and works, submit a Pull Request and ask a team member to review and merge your changes into the main branch.
+4. Make your desired changes, committing often. Once the feature is done and works, submit a Pull Request and ask a team member to review and merge your changes into the dev branch. The dev branch is a staging area for production.
 
 ### Branching Strategy
 
@@ -114,15 +114,8 @@ After PR approval, a designated team member (rotating) merges it into dev.
 To stage for deployment, follow these steps:
 
 1. ensure your .env file has `PIPELINE` set to "production",
-2. in the Dockerfile, ensure that lines below "Only needed for production" are NOT commented out,
+2. in the Dockerfile, ensure that lines below "Only needed for production" are NOT commented out.
 
-Once you have congiured this, run the following from the command line:
-`az acr login --name wealthwise
-docker build -t wealthwise.azurecr.io/wealthwise-app:latest .
-docker push wealthwise.azurecr.io/wealthwise-app:latest`
+Once this is configured, you can merge `dev` into `main`. It will trigger a GitHub Action to build and deploy your changes.
 
-You shouldn't have to manually stop and restart the app to see your changes. They should be visible shortly after this command.
-
-Code from dev will be deployed to a staging environment.
-
-Only tested and approved features will be merged into main for production deployment.
+You shouldn't have to manually stop and restart the app to see your changes. They should be visible shortly after the build succeeds.
