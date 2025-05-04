@@ -67,7 +67,12 @@ class Bill(models.Model):
     
     def __str__(self):
         return f"{self.item_name} - Due: {self.due_date}" 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
+    def __str__(self):
+        return self.name
+    
 class Transaction(models.Model):
     TRANSACTION_TYPES = [
         ('expense', 'Expense'),
@@ -98,9 +103,8 @@ class Transaction(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField()
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHODS)
-    category = models.CharField(max_length=20, choices=CATEGORIES, default='Others')
-    
-    category = models.CharField(max_length=20, choices=CATEGORIES, default='Others')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
 
@@ -154,11 +158,7 @@ class Settings(models.Model):
     def __str__(self):
         return f"Settings for {self.user.username}"
 
-class Category(models.Model):
-    name = models.CharField(max_length=100, unique=True)
 
-    def __str__(self):
-        return self.name
 
 # Budgets table holds foreign keys to User and Category; the combination 
 # of User and Category is the primary key. 

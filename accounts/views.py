@@ -98,7 +98,7 @@ def overview(request):
     for category in expense_categories:
         amount = Transaction.objects.filter(
             user=request.user,
-            category=category,
+            category__name=category,
             transaction_type='expense',
             date__month=current_date.month
         ).aggregate(total=Sum('amount'))['total'] or 0
@@ -107,7 +107,7 @@ def overview(request):
         prev_month = current_date.replace(day=1) - timedelta(days=1)
         prev_amount = Transaction.objects.filter(
             user=request.user,
-            category=category,
+            category__name=category,
             transaction_type='expense',
             date__month=prev_month.month
         ).aggregate(total=Sum('amount'))['total'] or 0
@@ -219,6 +219,10 @@ def transactions(request):
 @login_required
 def add_transaction(request):
     if request.method == 'POST':
+        # Convert category string to actual Category object
+        category_name = request.POST['category']
+        category_obj = get_object_or_404(Category, name=category_name)
+        
         transaction = Transaction(
             user=request.user,
             transaction_type=request.POST['transaction_type'],
@@ -227,7 +231,7 @@ def add_transaction(request):
             amount=request.POST['amount'],
             date=request.POST['date'],
             payment_method=request.POST['payment_method'],
-            category=request.POST['category']
+            category=category_obj
         )
         transaction.save()
     return redirect('transactions')
@@ -263,19 +267,6 @@ def delete_transaction(request, transaction_id):
         transaction.save()
     return redirect('transactions')
 
-@login_required
-def edit_transaction(request, transaction_id):
-    if request.method == 'POST':
-        transaction = get_object_or_404(Transaction, id=transaction_id, user=request.user)
-        transaction.transaction_type = request.POST['transaction_type']
-        transaction.item_name = request.POST['item_name']
-        transaction.shop_name = request.POST['shop_name']
-        transaction.amount = request.POST['amount']
-        transaction.date = request.POST['date']
-        transaction.payment_method = request.POST['payment_method']
-        transaction.category = request.POST['category']
-        transaction.save()
-    return redirect('transactions')
 
 @login_required
 def edit_transaction(request, transaction_id):
@@ -287,7 +278,8 @@ def edit_transaction(request, transaction_id):
         transaction.amount = request.POST['amount']
         transaction.date = request.POST['date']
         transaction.payment_method = request.POST['payment_method']
-        transaction.category = request.POST['category']
+        category_name = request.POST['category']
+        transaction.category = get_object_or_404(Category, name=category_name)
         transaction.save()
     return redirect('transactions')
 
@@ -417,12 +409,33 @@ def expenses(request):
     print("Monthly Data:", json.dumps(graph_data, indent=2))
     print("Yearly Data:", json.dumps(yearly_graph_data, indent=2))
 
+    # ---- BUDGET AWARE LOGIC BELOW ----
+    categories = Category.objects.all()
+    budgets = Budgets.objects.filter(user=request.user)
+    budget_map = {b.category.id: b.amount for b in budgets}
+
+    spent_map = this_month.values('category').annotate(total=Sum('amount'))
+    spent_map = {item['category']: item['total'] for item in spent_map}
+
+    category_data = []
+    for cat in categories:
+        spent = spent_map.get(cat.id, 0)
+        budget = budget_map.get(cat.id, 0)
+        percent = (spent / budget * 100) if budget else 0
+        category_data.append({
+            'id': cat.id,
+            'name': cat.name,
+            'budget': budget,
+            'spent': spent,
+            'percent': round(percent, 1)
+        })
+    
     # Categorize this month's expenses
     categorized_expenses_month = defaultdict(float)
     for expense in this_month:
-        category = expense.category
+        category_name = expense.category.name  # string
         amount = float(expense.amount)
-        categorized_expenses_month[category] += amount 
+        categorized_expenses_month[category_name] += amount 
     
     total_expenses_month = sum(categorized_expenses_month.values())
     expense_breakdown_month = []
@@ -477,7 +490,8 @@ def expenses(request):
         'expense_breakdown': expense_breakdown,
         'expense_breakdown_month': expense_breakdown_month,
         'total_expenses': total_expenses,
-        'this_month_expenses': this_month
+        'this_month_expenses': this_month,
+        'category_data': category_data
     }
     
     return render(request, 'expenses.html', context)
@@ -616,3 +630,26 @@ def delete_account(request):
 
 def home(request):
     return render(request, 'home.html') 
+
+from django.views.decorators.http import require_POST
+
+@require_POST
+@login_required
+def set_budget(request, category_id):
+    amount = request.POST.get('amount')
+    category = get_object_or_404(Category, id=category_id)
+
+    try:
+        amount = float(amount)
+        if amount < 0:
+            raise ValueError("Amount cannot be negative.")
+    except ValueError:
+        messages.error(request, "Invalid amount.")
+        return redirect('expenses')
+
+    budget, created = Budgets.objects.get_or_create(user=request.user, category=category)
+    budget.amount = amount
+    budget.save()
+
+    messages.success(request, f"Budget for {category.name} set to ${amount}.")
+    return redirect('expenses')
