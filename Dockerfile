@@ -1,14 +1,20 @@
-# Dockerfile runs on build. It builds the image with
-# the settings required.  
 FROM python:3.12
 
-# Set working directory inside container
-WORKDIR /Personal-Finance-Track-SWE-Group-6
+WORKDIR /app
 
-# Install dependencies from requirements.txt
-COPY requirements.txt requirements.txt
-RUN pip install -r requirements.txt
+COPY . /app/.
 
-# Copy project into container
-COPY . .
+RUN pip install --upgrade pip 
+RUN pip install --no-cache-dir -r requirements.txt
 
+ENV PYTHONUNBUFFERED=1
+
+
+# # Only needed for production:
+# ENV PORT=80
+# EXPOSE 80
+# # Copy entrypoint script and make it executable
+# COPY entrypoint.sh /app/entrypoint.sh
+# RUN chmod +x /app/entrypoint.sh
+# # Set the entrypoint script as the command to run when the container starts
+# ENTRYPOINT ["/app/entrypoint.sh"]
