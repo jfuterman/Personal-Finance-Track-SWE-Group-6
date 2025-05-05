@@ -22,19 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const achieved = +inputAchieved.value.trim();
     let errorMsg = "";
 
-    if (
-      !monthly ||
-      monthly <= 0 ||
-      !Number.isFinite(monthly) ||
-      !achieved ||
-      achieved <= 0 ||
-      !Number.isFinite(achieved)
-    ) {
-      errorMsg =
-        "❌ Monthly amount or Achieved amount must be a number greater than 0.";
-    }
-
-    if (errorMsg) {
+    if (!monthly || monthly <= 0 || !Number.isFinite(monthly)) {
+      errorMsg = "❌ Monthly amount must be a number greater than 0.";
       e.preventDefault();
       errorEl.textContent = errorMsg;
       errorEl.style.display = "block";
