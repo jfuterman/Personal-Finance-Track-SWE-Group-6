@@ -395,17 +395,54 @@ def expenses(request):
     sorted_years = sorted(yearly_data.keys())
     
     # Prepare graph data for monthly expenses
-    graph_data = {
-        'labels': sorted_months,
-        'values': [monthly_data[month] for month in sorted_months]
+    # Initialize data for stacked chart
+    category_list = ['Housing', 'Food', 'Transportation', 'Entertainment', 'Shopping', 'Others']
+    monthly_category_data = {month: {cat: 0.0 for cat in category_list} for month in sorted_months}
+
+    for expense in expenses:
+        month_key = expense.date.strftime('%B %Y')
+        category = expense.category
+        amount = float(expense.amount)
+        if month_key in monthly_category_data and category in monthly_category_data[month_key]:
+            monthly_category_data[month_key][category] += amount
+
+    category_colors = {
+        'Housing': '#4e79a7',
+        'Food': '#f28e2b',
+        'Transportation': '#e15759',
+        'Entertainment': '#76b7b2',
+        'Shopping': '#59a14f',
+        'Others': '#edc949'
     }
+
+
+# Build stacked chart data for Chart.js
+    stacked_graph_data = {
+    'labels': sorted_months,
+    'datasets': [
+        {
+            'label': cat,
+            'data': [monthly_category_data[month][cat] for month in sorted_months],
+            'backgroundColor': category_colors[cat],  # 👈 assign color here
+            'stack': 'expenses'
+        } for cat in category_list
+    ]
+}
+
+
     
     # Prepare graph data for yearly expenses
     yearly_graph_data = {
         'labels': sorted_years,
         'values': [yearly_data[year] for year in sorted_years]
     }
-    
+
+    # Prepare graph data for monthly expenses (non-stacked)
+    graph_data = {
+        'labels': sorted_months,
+        'values': [monthly_data[month] for month in sorted_months]
+    }
+
     print("Monthly Data:", json.dumps(graph_data, indent=2))
     print("Yearly Data:", json.dumps(yearly_graph_data, indent=2))
 
@@ -487,12 +524,14 @@ def expenses(request):
         'current_date': current_date,
         'graph_data': json.dumps(graph_data),
         'yearly_data': json.dumps(yearly_graph_data),
+        'stacked_data': json.dumps(stacked_graph_data),  # 👈 add this line
         'expense_breakdown': expense_breakdown,
         'expense_breakdown_month': expense_breakdown_month,
         'total_expenses': total_expenses,
         'this_month_expenses': this_month,
         'category_data': category_data
     }
+
     
     return render(request, 'expenses.html', context)
 

@@ -2,14 +2,41 @@
 {% load static %}
 
 {% block extra_head %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="{% static 'css/expenses.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script>
+        window.Chart = Chart;
+    </script>      
+    <script src="{% static 'js/expenses.js' %}"></script>
+    <script>
+        console.log("expenses.js script loaded");
+    </script>      
+    <link rel="stylesheet" href="{% static 'css/expenses.css' %}">
 {% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
     <h2 class="mb-4">Expenses Comparison</h2>
 
+<<<<<<< HEAD
+=======
+    <!-- Monthly Comparison Graph -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title">Total Expenses</h5>
+                <select id="timeRangeSelect" class="form-select" style="width: auto;">
+                    <option value="monthly">Monthly View</option>
+                    <option value="yearly">Yearly View</option>
+                    <option value="stacked">Stacked View</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="expensesChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+>>>>>>> 3351af4 (WIP: implement expenses chart)
     <!-- Hidden data for JavaScript -->
     <script id="graphData" type="application/json">
         {{ graph_data|safe }}
@@ -17,6 +44,10 @@
     <script id="yearlyData" type="application/json">
         {{ yearly_data|safe }}
     </script>
+    <script id="stackedData" type="application/json">
+        {{ stacked_data|safe }}
+    </script>
+    
 
    <!-- Expenses Breakdown -->
    <h3 class="mb-4">Expenses Breakdown for {{current_date|date:"F"}}</h3>
@@ -161,6 +192,9 @@
    </div>
 </div>
 </div>
+<<<<<<< HEAD
 
 <script src="{% static 'js/expenses.js' %}"></script>
+=======
+>>>>>>> 3351af4 (WIP: implement expenses chart)
 {% endblock %}

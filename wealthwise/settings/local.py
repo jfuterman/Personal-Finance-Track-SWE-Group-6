@@ -68,14 +68,20 @@ WSGI_APPLICATION = 'wealthwise.wsgi.application'
 
 DATABASES = {
     'default': {
+<<<<<<< HEAD:wealthwise/settings/local.py
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': get_secret("POSTGRES_DB"),
         'HOST': get_secret("DB_HOST"),
         'USER': get_secret("POSTGRES_USER"),
         'PASSWORD': get_secret("POSTGRES_PASSWORD"),
         'PORT': get_secret("DB_PORT"),
+=======
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+>>>>>>> 3351af4 (WIP: implement expenses chart):wealthwise/settings.py
     }
 }
+
 
 AUTH_USER_MODEL = 'accounts.CustomUser'
 

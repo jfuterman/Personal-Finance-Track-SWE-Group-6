@@ -1,9 +1,44 @@
+alembic==1.13.1
+altair==5.2.0
+altair-data-server==0.4.1
+altair-saver==0.5.0
+altair-viewer==0.4.0
+anyio==4.2.0
+appnope==0.1.3
+archspec @ file:///croot/archspec_1697725767277/work
+argon2-cffi==23.1.0
+argon2-cffi-bindings==21.2.0
+arrow==1.3.0
 asgiref==3.8.1
-certifi==2025.1.31
-charset-normalizer==3.4.1
-Django==5.1.7
-django-cors-headers==4.7.0
+asttokens==2.4.1
+async-lru==2.0.4
+attrs==23.2.0
+Babel==2.14.0
+beautifulsoup4==4.12.3
+bleach==6.1.0
+blinker==1.8.2
+boltons @ file:///Users/ec2-user/ci_py311/boltons_1678396074811/work
+Brotli @ file:///Users/ec2-user/ci_py311/brotli-split_1678379922007/work
+certifi @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_dfez5lkpj0/croot/certifi_1707229180975/work/certifi
+cffi @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_44mvycfmuf/croot/cffi_1700254431144/work
+charset-normalizer @ file:///tmp/build/80754af9/charset-normalizer_1630003229654/work
+click==8.1.7
+cligj==0.7.2
+comm==0.2.1
+conda @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_cbv1o7y_57/croot/conda_1706737986827/work
+conda-content-trust @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_3dvkcnnrtu/croot/conda-content-trust_1693490624887/work
+conda-libmamba-solver @ file:///croot/conda-libmamba-solver_1702997573971/work/src
+conda-package-handling @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_99vcqjo8cf/croot/conda-package-handling_1690999935230/work
+conda_package_streaming @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_d5wg6eonuu/croot/conda-package-streaming_1690987980119/work
+cramjam==2.8.1
+cryptography @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_85yzbl_qze/croot/cryptography_1702070288916/work
+debugpy==1.8.0
+decorator==5.1.1
+defusedxml==0.7.1
+distro @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_e85zz_84gd/croot/distro_1701455023959/work
+Django==5.1.6
 djangorestframework==3.16.0
+<<<<<<< HEAD
 dotenv==0.9.9
 gunicorn==23.0.0
 idna==3.10
@@ -17,3 +52,137 @@ sqlparse==0.5.3
 typing_extensions==4.12.2
 urllib3==2.3.0
 whitenoise==6.9.0
+=======
+executing==2.0.1
+fastjsonschema==2.19.1
+fastparquet==2023.10.1
+Flask==3.0.3
+Flask-Migrate==4.0.7
+Flask-SQLAlchemy==3.1.1
+Flask-WTF==1.2.1
+fqdn==1.5.1
+fsspec==2024.2.0
+geopandas==0.14.3
+greenlet==3.0.3
+h11==0.14.0
+idna @ file:///Users/ec2-user/ci_py311/idna_1678315819133/work
+install==1.3.5
+ipykernel==6.29.0
+ipytablewidgets==0.3.1
+ipython==8.20.0
+ipywidgets==8.1.1
+isodate==0.6.1
+isoduration==20.11.0
+itsdangerous==2.2.0
+jedi==0.19.1
+Jinja2==3.1.3
+json5==0.9.14
+jsonpatch @ file:///tmp/build/80754af9/jsonpatch_1615747632069/work
+jsonpointer==2.1
+jsonschema==4.21.1
+jsonschema-specifications==2023.12.1
+jupyter==1.0.0
+jupyter-console==6.6.3
+jupyter-events==0.9.0
+jupyter-lsp==2.2.2
+jupyter_client==8.6.0
+jupyter_core==5.7.1
+jupyter_server==2.12.5
+jupyter_server_terminals==0.5.2
+jupyterlab==4.0.12
+jupyterlab-widgets==3.0.9
+jupyterlab_pygments==0.3.0
+jupyterlab_server==2.25.2
+libmambapy @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_c6lfzyxwf1/croot/mamba-split_1698782637688/work/libmambapy
+lz4==4.3.3
+Mako==1.3.3
+MarkupSafe==2.1.4
+matplotlib-inline==0.1.6
+menuinst @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_031xlbs8st/croot/menuinst_1702390299738/work
+mistune==3.0.2
+mkl-fft @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_af8wl3mjfu/croot/mkl_fft_1695058185839/work
+mkl-random @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_0fq2s894lk/croot/mkl_random_1695059822529/work
+mkl-service==2.4.0
+mnist==0.2.2
+nbclient==0.9.0
+nbconvert==7.14.2
+nbformat==5.9.2
+nest-asyncio==1.6.0
+notebook==7.0.7
+notebook_shim==0.2.3
+numpy @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_97k4h5q73m/croot/numpy_and_numpy_base_1704311708477/work/dist/numpy-1.26.3-cp311-cp311-macosx_10_9_x86_64.whl#sha256=2ebf6a0390ba9e55eeb97f369d6e20fd5cff5bd78934ae8c164e4c8b153406ca
+outcome==1.3.0.post0
+overrides==7.7.0
+packaging @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_2algm5p9lp/croot/packaging_1693575178038/work
+pandas==1.5.3
+pandocfilters==1.5.1
+parso==0.8.3
+pexpect==4.9.0
+php==1.2.1
+platformdirs @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_640usff2p5/croot/platformdirs_1692205656061/work
+pluggy @ file:///Users/ec2-user/ci_py311/pluggy_1678315400971/work
+portpicker==1.6.0
+prometheus-client==0.19.0
+prompt-toolkit==3.0.43
+psutil==5.9.8
+ptyprocess==0.7.0
+pure-eval==0.2.2
+pyarrow @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_20mrtbsygp/croot/pyarrow_1707330841142/work/python
+pycosat @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_09anpuxx5u/croot/pycosat_1696536514697/work
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pygame==2.6.0
+Pygments==2.17.2
+pyOpenSSL @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_7fwdg30481/croot/pyopenssl_1690223429070/work
+pyparsing==3.1.1
+PySocks @ file:///Users/ec2-user/ci_py311/pysocks_1678315868424/work
+python-dateutil==2.8.2
+python-json-logger==2.0.7
+pytz==2024.1
+PyYAML==6.0.1
+pyzmq==25.1.2
+qtconsole==5.5.1
+QtPy==2.4.1
+rdflib==7.0.0
+referencing==0.33.0
+requests @ file:///private/var/folders/c_/qfmhj66j0tn016nkx_th4hxm0000gp/T/abs_fa2zrx4csg/croot/requests_1690400223595/work
+rfc3339-validator==0.1.4
+rfc3986-validator==0.1.1
+rpds-py==0.17.1
+ruamel.yaml @ file:///Users/ec2-user/ci_py311/ruamel.yaml_1678379291841/work
+selenium==4.18.1
+Send2Trash==1.8.2
+shapely==2.0.2
+six==1.16.0
+sniffio==1.3.0
+sortedcontainers==2.4.0
+soupsieve==2.5
+SQLAlchemy==2.0.30
+sqlparse==0.5.3
+stack-data==0.6.3
+terminado==0.18.0
+tinycss2==1.2.1
+toolz==0.12.1
+tornado==6.4
+tqdm @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_03acd6t6ca/croot/tqdm_1679561866522/work
+traitlets==5.14.1
+traittypes==0.2.1
+trio==0.24.0
+trio-websocket==0.11.1
+truststore @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_d4qy09ztdt/croot/truststore_1695244322396/work
+types-python-dateutil==2.8.19.20240106
+typing_extensions==4.10.0
+tzdata==2023.4
+uri-template==1.3.0
+urllib3 @ file:///private/var/folders/sy/f16zz6x50xz3113nwtb9bvq00000gp/T/abs_62orwr3pr2/croot/urllib3_1698257564351/work
+vega==4.0.0
+vega-datasets==0.9.0
+wcwidth==0.2.13
+webcolors==1.13
+webencodings==0.5.1
+websocket-client==1.7.0
+Werkzeug==3.0.3
+widgetsnbextension==4.0.9
+wsproto==1.2.0
+WTForms==3.1.2
+zstandard @ file:///Users/ec2-user/ci_py311_2/zstandard_1679338593428/work
+>>>>>>> 3351af4 (WIP: implement expenses chart)

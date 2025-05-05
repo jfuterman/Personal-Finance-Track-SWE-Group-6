@@ -24,6 +24,8 @@ function initializeExpensesChart() {
 
     let graphDataElement = document.getElementById('graphData');
     let yearlyDataElement = document.getElementById('yearlyData');
+    let stackedDataElement = document.getElementById('stackedData');
+
 
     if (!graphDataElement || !yearlyDataElement) {
         console.error('Could not find graph data elements');
@@ -39,81 +41,66 @@ function initializeExpensesChart() {
     
     let chart = null;
 
-    function createChart(data, type = 'monthly') {
-        console.log(`Creating ${type} chart...`);
-        if (chart) {
-            console.log('Destroying existing chart...');
-            chart.destroy();
-        }
-
-        const chartConfig = {
-            type: 'bar',
-            data: {
-                labels: data.labels,
-                datasets: [{
-                    label: type === 'monthly' ? 'Monthly Expenses' : 'Yearly Expenses',
-                    data: data.values,
-                    backgroundColor: '#0d6efd',
-                    borderColor: '#0d6efd',
-                    borderWidth: 1,
-                    borderRadius: 4,
-                    barThickness: 20
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top',
-                        labels: {
-                            font: {
-                                size: 12
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return '$' + context.raw.toLocaleString();
-                            }
+function createChart(data, type = 'monthly') {
+    if (chart) {
+        chart.destroy();
+    }
+    
+    const isStacked = type === 'stacked';
+    
+    const config = {
+        type: 'bar',
+        data: isStacked ? {
+            labels: data.labels,
+            datasets: data.datasets
+        } : {
+            labels: data.labels,
+            datasets: [{
+                label: type === 'monthly' ? 'Monthly Expenses' : 'Yearly Expenses',
+                data: data.values,
+                backgroundColor: '#0d6efd',
+                borderColor: '#0d6efd',
+                borderWidth: 1,
+                borderRadius: 4,
+                barThickness: 20
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return '$' + context.raw.toLocaleString();
                         }
                     }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: isStacked,
+                    grid: { display: false }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        grid: {
-                            display: true,
-                            color: '#f1f5f9'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return '$' + value.toLocaleString();
-                            },
-                            font: {
-                                size: 11
-                            }
-                        }
-                    },
-                    x: {
-                        grid: {
-                            display: false
-                        },
-                        ticks: {
-                            font: {
-                                size: 11
-                            }
+                y: {
+                    stacked: isStacked,
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
                         }
                     }
                 }
             }
-        };
-
-        console.log('Chart configuration:', chartConfig);
-        chart = new Chart(ctx, chartConfig);
-    }
+        }
+    };
+    
+    chart = new Chart(ctx, config);
+}
+    
 
     // Initial chart creation
     createChart(graphData);
@@ -122,9 +109,15 @@ function initializeExpensesChart() {
     const timeRangeSelect = document.getElementById('timeRangeSelect');
     if (timeRangeSelect) {
         timeRangeSelect.addEventListener('change', function(e) {
-            console.log('Time range changed:', e.target.value);
             const selectedValue = e.target.value;
-            createChart(selectedValue === 'monthly' ? graphData : yearlyData, selectedValue);
+            if (selectedValue === 'monthly') {
+                createChart(graphData, 'monthly');
+            } else if (selectedValue === 'yearly') {
+                createChart(yearlyData, 'yearly');
+            } else if (selectedValue === 'stacked') {
+                const stackedData = JSON.parse(stackedDataElement.textContent);
+                createChart(stackedData, 'stacked');
+            }
         });
     } else {
         console.error('Could not find time range select element');
