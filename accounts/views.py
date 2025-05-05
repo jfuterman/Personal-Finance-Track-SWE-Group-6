@@ -556,6 +556,8 @@ def goals(request):
     overall_achieved = sum(float(g.achieved_amount)  for g in goals_qs)
     overall_progress = round((overall_achieved / overall_target) * 100, 2) if overall_target > 0 else 0
 
+    for g in goals_qs: g.surplus = g.achieved_amount - g.monthly_target if g.achieved_amount > g.monthly_target else 0
+
     return render(request, 'goals.html', {
         'active_tab':       'goals',
         'goals':            goals_qs,
