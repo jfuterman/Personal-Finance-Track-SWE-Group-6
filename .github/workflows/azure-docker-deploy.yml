@@ -3,33 +3,27 @@ name: Deploy Django App to Azure Web App (Docker)
 on:
   push:
     branches:
-      - main # Trigger this workflow on pushes to the main branch
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest # Specify the runner environment
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout your code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Log in to your Azure Container Registry (ACR)
-      # This step is necessary to push the Docker image you build to ACR.
-      # It uses the ACR username and password secrets you should have configured in GitHub.
       - name: Log in to Azure Container Registry (ACR)
         uses: azure/docker-login@v1
         with:
-          login-server: wealthwise.azurecr.io # Your ACR login server
-          username: ${{ secrets.ACR_USERNAME }} # GitHub secret for ACR username
-          password: ${{ secrets.ACR_PASSWORD }} # GitHub secret for ACR password
+          login-server: wealthwise.azurecr.io
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
 
-      # Step 3: Build and push the Docker image to ACR
-      # We'll use the commit SHA as the image tag for better versioning.
       - name: Build and push Docker image
         run: |
-          IMAGE_NAME="wealthwise.azurecr.io/wealthwise" # Your image name in ACR
-          IMAGE_TAG="${{ github.sha }}" # Use the commit SHA as the tag
+          IMAGE_NAME="wealthwise.azurecr.io/wealthwise" 
+          IMAGE_TAG="${{ github.sha }}" 
           FULL_IMAGE_NAME="${IMAGE_NAME}:${IMAGE_TAG}"
 
           echo "Building Docker image: $FULL_IMAGE_NAME"
@@ -41,14 +35,9 @@ jobs:
           # Set the image name as an environment variable for the next step
           echo "DOCKER_IMAGE_NAME=${FULL_IMAGE_NAME}" >> $GITHUB_ENV
 
-      # Step 4: Deploy the Docker image to Azure Web App using the Publish Profile
-      # This step uses the azure/webapps-deploy action and authenticates
-      # using the publish profile secret you added to your GitHub repository.
-      # It tells the App Service which image to pull from ACR and run.
       - name: Deploy to Azure Web App using Publish Profile
         uses: azure/webapps-deploy@v2
         with:
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }} # Your GitHub secret containing the publish profile XML
-          app-name: wealthwise # The name of your Azure App Service
-          images: ${{ env.DOCKER_IMAGE_NAME }} # Use the full image name including the SHA tag
-
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          app-name: wealthwise
+          images: ${{ env.DOCKER_IMAGE_NAME }}
