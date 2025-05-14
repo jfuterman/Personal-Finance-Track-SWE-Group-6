@@ -116,3 +116,24 @@
     font-size: 1.25rem;
   }
 }
+
+.quick-add-btn {
+  border: 2px solid #2563eb;       
+  background-color: #fff;          
+  color: #2563eb;                   
+  border-radius: 0.75rem;          
+  padding: 0.5rem 1rem;             
+  font-weight: 500;              
+  cursor: pointer;                
+  transition: all 0.2s ease-in-out; 
+}
+
+.quick-add-btn:hover {
+  background-color: #2563eb;       
+  color: #fff;                      
+}
+
+.text-success {
+  color: #16a34a;
+  font-weight: 500;
+}

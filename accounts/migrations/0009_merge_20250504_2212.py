@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0007_merge_20250503_1740'),
+        ('accounts', '0007_merge_20250501_0335'),
         ('accounts', '0008_alter_transaction_category'),
     ]
 
